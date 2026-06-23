@@ -26,7 +26,7 @@ export default function FormInput({
       )}
       <input
         required={required}
-        className={`w-full rounded-xl px-4 py-3 text-sm text-white transition-all outline-none placeholder:text-white/25 ${className}`}
+        className={`w-full rounded-xl px-4 py-3 text-base text-white transition-all outline-none placeholder:text-white/25 ${className}`}
         style={{
           background: 'rgba(255,255,255,0.05)',
           border: `1px solid ${error ? 'rgba(214,0,0,0.5)' : 'rgba(255,255,255,0.08)'}`,

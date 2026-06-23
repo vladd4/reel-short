@@ -27,7 +27,7 @@ export default function EpisodeGrid({ episodes, seriesId, totalCount }: Props) {
           {totalCount} total
         </span>
       </div>
-      <div className="grid grid-cols-7 gap-1 sm:grid-cols-[repeat(auto-fill,minmax(80px,1fr))] sm:gap-1.5">
+      <div className="grid grid-cols-6 gap-1.5 sm:grid-cols-[repeat(auto-fill,minmax(80px,1fr))] sm:gap-1.5">
         {episodes.map((episode) => (
           <Link
             key={episode.number}

@@ -247,7 +247,7 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
           className="scrollbar-hide w-full lg:w-[520px] lg:flex-shrink-0 lg:overflow-y-auto"
           style={{ background: '#040405', borderTop: '1px solid rgba(255,255,255,0.06)' }}
         >
-          <div className="space-y-6 px-4 pt-6 pb-12 sm:px-6 lg:pt-8">
+          <div className="space-y-6 px-4 pt-6 pb-4 sm:px-6 sm:pb-12 lg:pt-8">
             <nav className="flex flex-wrap items-center gap-1.5 text-xs text-muted">
               <Link href="/" className="transition-colors hover:text-foreground">
                 Home
@@ -326,7 +326,7 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
       </div>
 
       {related.length > 0 && (
-        <div className="px-4 py-10 sm:px-8 md:px-12" style={{ background: 'var(--background)' }}>
+        <div className="px-4 pt-4 pb-10 sm:px-8 sm:py-10 md:px-12" style={{ background: 'var(--background)' }}>
           <GenreRow genre="Recommendations" series={related} showMoreButton={false} />
         </div>
       )}

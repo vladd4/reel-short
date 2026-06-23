@@ -73,7 +73,7 @@ export default function EpisodeSelector({
         </Link>
       </div>
 
-      <div className="grid grid-cols-7 gap-1.5">
+      <div className="grid grid-cols-6 gap-1.5">
         {visibleEpisodes.map((episode) => {
           const isLocked = !canWatch(seriesId, episode.number, freeEpisodes, isSubscribed)
           const isCurrent = episode.number === currentEpisode

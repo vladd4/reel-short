@@ -11,7 +11,7 @@ type Props = {
   onContinue: () => void
 }
 
-const emailSchema = z.string().min(1, 'Email is required').email('Enter a valid email address')
+const emailSchema = z.email('Enter a valid email address')
 
 const passwordSignInSchema = z.string().min(1, 'Password is required')
 
@@ -21,7 +21,7 @@ const passwordRegisterSchema = z
   .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
   .regex(/[0-9]/, 'Must contain at least one number')
 
-type FieldErrors = { email?: string; password?: string }
+type FieldErrors = { email?: string; password?: string; terms?: string }
 
 export default function SignInModal({ onClose, onContinue }: Props) {
   const { login, register } = useAuth()
@@ -32,7 +32,7 @@ export default function SignInModal({ onClose, onContinue }: Props) {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [apiError, setApiError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [marketing, setMarketing] = useState(false)
+  const [agreedToTerms, setAgreedToTerms] = useState(false)
 
   function validate(): boolean {
     const errors: FieldErrors = {}
@@ -43,6 +43,8 @@ export default function SignInModal({ onClose, onContinue }: Props) {
     const pwSchema = mode === 'register' ? passwordRegisterSchema : passwordSignInSchema
     const pwResult = pwSchema.safeParse(password)
     if (!pwResult.success) errors.password = pwResult.error.issues[0].message
+
+    if (mode === 'register' && !agreedToTerms) errors.terms = 'You must accept the Terms of use and Privacy policy'
 
     setFieldErrors(errors)
     return Object.keys(errors).length === 0
@@ -78,6 +80,7 @@ export default function SignInModal({ onClose, onContinue }: Props) {
     setMode((m) => (m === 'signin' ? 'register' : 'signin'))
     setFieldErrors({})
     setApiError('')
+    setAgreedToTerms(false)
   }
 
   return (
@@ -144,37 +147,51 @@ export default function SignInModal({ onClose, onContinue }: Props) {
           {mode === 'signin' ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
         </button>
 
-        {mode === 'register' && (
-          <label className="mb-6 flex cursor-pointer items-start gap-3">
-            <div
-              onClick={() => setMarketing((v) => !v)}
-              className="mt-0.5 flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center rounded transition-colors"
-              style={{
-                background: marketing ? '#4500ff' : 'transparent',
-                border: marketing ? '1px solid #4500ff' : '1.5px solid rgba(255,255,255,0.25)',
-              }}
-            >
-              {marketing && (
-                <svg viewBox="0 0 24 24" fill="white" className="h-3 w-3">
-                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                </svg>
-              )}
-            </div>
-            <span className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
-              I&apos;d like to receive emails with updates and special offers from My Drama
-            </span>
-          </label>
-        )}
 
-        <div className="space-y-1 text-center">
-          <p className="text-xs" style={{ color: 'rgba(255,255,255,0.55)' }}>
-            By continuing you accept our{' '}
-            <span className="cursor-pointer underline" style={{ color: '#7a90ff' }}>Terms of use</span>
-            {' '}and{' '}
-            <span className="cursor-pointer underline" style={{ color: '#7a90ff' }}>Privacy policy</span>
-          </p>
-          <p className="text-[10px]" style={{ color: 'rgba(255,255,255,0.4)' }}>My Drama Inc.</p>
-        </div>
+        {mode === 'register' ? (
+          <div className="flex flex-col items-center gap-1.5">
+            <label className="flex cursor-pointer items-center gap-2.5">
+              <div
+                onClick={() => { setAgreedToTerms((v) => !v); setFieldErrors((fe) => ({ ...fe, terms: undefined })) }}
+                className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center rounded transition-colors"
+                style={{
+                  background: agreedToTerms ? '#4500ff' : 'transparent',
+                  border: fieldErrors.terms
+                    ? '1.5px solid #ff4d4d'
+                    : agreedToTerms
+                    ? '1px solid #4500ff'
+                    : '1.5px solid rgba(255,255,255,0.25)',
+                }}
+              >
+                {agreedToTerms && (
+                  <svg viewBox="0 0 24 24" fill="white" className="h-3 w-3">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                  </svg>
+                )}
+              </div>
+              <span className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                I agree to the{' '}
+                <span className="cursor-pointer underline" style={{ color: '#7a90ff' }}>Terms of use</span>
+                {' '}and{' '}
+                <span className="cursor-pointer underline" style={{ color: '#7a90ff' }}>Privacy policy</span>
+              </span>
+            </label>
+            {fieldErrors.terms && (
+              <p className="text-xs" style={{ color: '#ff4d4d' }}>{fieldErrors.terms}</p>
+            )}
+            <p className="text-[10px]" style={{ color: 'rgba(255,255,255,0.4)' }}>My Drama Inc.</p>
+          </div>
+        ) : (
+          <div className="space-y-1 text-center">
+            <p className="text-xs" style={{ color: 'rgba(255,255,255,0.55)' }}>
+              By continuing you accept our{' '}
+              <span className="cursor-pointer underline" style={{ color: '#7a90ff' }}>Terms of use</span>
+              {' '}and{' '}
+              <span className="cursor-pointer underline" style={{ color: '#7a90ff' }}>Privacy policy</span>
+            </p>
+            <p className="text-[10px]" style={{ color: 'rgba(255,255,255,0.4)' }}>My Drama Inc.</p>
+          </div>
+        )}
       </form>
     </BottomDrawer>
   )
