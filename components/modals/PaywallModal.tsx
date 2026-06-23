@@ -174,34 +174,27 @@ export default function PaywallModal({
                     Newby Sale — <span style={{ color: '#7a90ff' }}>67% OFF</span>
                   </p>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div
-                    className="flex items-center gap-1.5 rounded-lg px-3 py-1.5"
-                    style={{
-                      background: 'rgba(0,0,0,0.35)',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                    }}
+                <div
+                  className="flex items-center gap-1.5 rounded-lg px-3 py-1.5"
+                  style={{
+                    background: 'rgba(0,0,0,0.35)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                  }}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="h-3.5 w-3.5"
+                    style={{ color: '#7a90ff' }}
                   >
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      className="h-3.5 w-3.5"
-                      style={{ color: '#7a90ff' }}
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                      <polyline points="12 6 12 12 16 14" />
-                    </svg>
-                    <span className="font-mono text-sm font-bold text-white tabular-nums">
-                      {mins}:{secs}
-                    </span>
-                  </div>
-                  <CloseButton
-                    onClick={handleClose}
-                    className="h-7 w-7 rounded-full"
-                    style={{ color: 'rgba(255,255,255,0.4)' }}
-                  />
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                  <span className="font-mono text-sm font-bold text-white tabular-nums">
+                    {mins}:{secs}
+                  </span>
                 </div>
               </div>
             </div>
