@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { Episode, Series } from '@/types'
 import { EPISODE_COST } from '@/constants'
+import { useAuth } from '@/lib/auth'
 import { useStore } from '@/lib/store'
 import PaywallModal from '@/components/modals/PaywallModal'
 
@@ -14,11 +15,13 @@ type Props = {
 
 export default function EpisodeList({ series, currentEpisode }: Props) {
   const router = useRouter()
+  const { user } = useAuth()
   const { canWatch } = useStore()
+  const isSubscribed = user?.isSubscribed ?? false
   const [paywallEp, setPaywallEp] = useState<number | null>(null)
 
   function handleEpClick(ep: Episode) {
-    if (canWatch(series.id, ep.number, series.freeEpisodes)) {
+    if (canWatch(series.id, ep.number, series.freeEpisodes, isSubscribed)) {
       router.push(`/watch/${series.id}/${ep.number}`)
     } else {
       setPaywallEp(ep.number)
@@ -29,7 +32,7 @@ export default function EpisodeList({ series, currentEpisode }: Props) {
     <>
       <div className="space-y-1.5">
         {series.episodes.map((ep) => {
-          const unlocked = canWatch(series.id, ep.number, series.freeEpisodes)
+          const unlocked = canWatch(series.id, ep.number, series.freeEpisodes, isSubscribed)
           const isCurrent = ep.number === currentEpisode
 
           return (

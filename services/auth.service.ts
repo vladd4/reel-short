@@ -1,13 +1,46 @@
-import type { User } from '@/types'
+import type { ApiUser } from '@/types'
 import { HttpClient } from './http.client'
 
+export type AuthTokens = {
+  accessToken: string
+  refreshToken: string
+  tokenType: string
+  accessTokenExpiresAt: string
+  refreshTokenExpiresAt: string
+}
+
+export type AuthResponse = {
+  user: ApiUser
+  tokens: AuthTokens
+}
+
 class AuthService extends HttpClient {
-  async signIn(email: string): Promise<{ token: string }> {
-    return this.post<{ token: string }>('/auth/signin', { email })
+  async register(email: string, password: string): Promise<AuthResponse> {
+    return this.post<AuthResponse>('/auth/register', { email, password })
   }
 
-  async me(): Promise<User> {
-    return this.get<User>('/auth/me')
+  async login(email: string, password: string): Promise<AuthResponse> {
+    return this.post<AuthResponse>('/auth/login', { email, password })
+  }
+
+  async refresh(refreshToken: string): Promise<{ accessToken: string }> {
+    return this.post<{ accessToken: string }>('/auth/refresh', { refreshToken })
+  }
+
+  async logout(refreshToken: string): Promise<void> {
+    return this.post<void>('/auth/logout', { refreshToken })
+  }
+
+  async me(): Promise<{ user: ApiUser }> {
+    return this.get<{ user: ApiUser }>('/auth/me')
+  }
+
+  async updateEmail(newEmail: string, currentPassword: string): Promise<{ user: ApiUser }> {
+    return this.patch<{ user: ApiUser }>('/auth/email', { newEmail, currentPassword })
+  }
+
+  async updatePassword(currentPassword: string, newPassword: string): Promise<void> {
+    return this.patch<void>('/auth/password', { currentPassword, newPassword })
   }
 }
 

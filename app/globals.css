@@ -77,6 +77,16 @@ video::-webkit-media-controls {
   display: none !important;
 }
 
+::cue {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.6);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -169,7 +179,9 @@ video::-webkit-media-controls {
   border-radius: 20px 20px 0 0;
   transform: scale(0.95);
   opacity: 0;
-  transition: transform 0.25s ease-out, opacity 0.25s ease-out;
+  transition:
+    transform 0.25s ease-out,
+    opacity 0.25s ease-out;
 }
 .modal-drawer.open {
   transform: scale(1);

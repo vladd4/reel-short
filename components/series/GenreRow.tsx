@@ -43,7 +43,13 @@ export default function GenreRow({ genre, series, showMoreButton = true }: Props
             }}
           >
             See all
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-3 w-3">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              className="h-3 w-3"
+            >
               <path d="M9 18l6-6-6-6" />
             </svg>
           </Link>

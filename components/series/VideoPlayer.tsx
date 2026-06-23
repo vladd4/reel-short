@@ -3,6 +3,7 @@
 import PlayerControls from './player/PlayerControls'
 import { usePlayerState } from './player/usePlayerState'
 
+
 type Props = {
   src: string
   title: string
@@ -49,6 +50,21 @@ export default function VideoPlayer({
         playsInline
         autoPlay
       />
+
+      {player.currentCue && (
+        <div className="pointer-events-none absolute inset-x-0 bottom-[10%] flex justify-center px-6">
+          <span
+            className="rounded-md px-2.5 py-1 text-center text-[1.25rem] font-semibold leading-snug text-white"
+            style={{
+              background: 'rgba(0,0,0,0.62)',
+              textShadow: '0 1px 3px rgba(0,0,0,0.9)',
+              whiteSpace: 'pre-line',
+            }}
+          >
+            {player.currentCue}
+          </span>
+        </div>
+      )}
 
       {!player.playing && (
         <div

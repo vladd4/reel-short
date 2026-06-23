@@ -21,7 +21,11 @@ export const metadata: Metadata = {
   },
 }
 
-type Props = { searchParams: Promise<{ genre?: string }> }
+type Props = {
+  searchParams: Promise<{
+    genre?: string
+  }>
+}
 
 export default async function Home({ searchParams }: Props) {
   const { genre } = await searchParams
@@ -45,7 +49,7 @@ export default async function Home({ searchParams }: Props) {
 
         {isShowingAll ? (
           await Promise.all(
-            GENRES.map(async (g) => (
+            GENRES.map(async (g, i) => (
               <GenreRow key={g} genre={g} series={await seriesService.getAll(g)} />
             )),
           )

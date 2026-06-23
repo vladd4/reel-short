@@ -1,6 +1,16 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { parseVTT, type Cue } from '@/lib/parseVTT'
+
+const SUBTITLE_SRCS: Record<string, string> = {
+  English:    '/subtitles/ep-1/en.vtt',
+  Spanish:    '/subtitles/ep-1/es.vtt',
+  French:     '/subtitles/ep-1/fr.vtt',
+  Portuguese: '/subtitles/ep-1/pt.vtt',
+  German:     '/subtitles/ep-1/de.vtt',
+  Ukrainian:  '/subtitles/ep-1/uk.vtt',
+}
 
 export type SettingsView = null | 'speed' | 'quality'
 
@@ -31,6 +41,8 @@ export function usePlayerState(src: string, onEnded?: () => void) {
   const [speed, setSpeed] = useState(1)
   const [quality, setQuality] = useState('Auto (540P)')
   const [subtitle, setSubtitle] = useState('English')
+  const [cues, setCues] = useState<Cue[]>([])
+  const [currentCue, setCurrentCue] = useState<string | null>(null)
 
   useEffect(() => {
     playingRef.current = playing
@@ -86,6 +98,26 @@ export function usePlayerState(src: string, onEnded?: () => void) {
   useEffect(() => {
     if (videoRef.current) videoRef.current.playbackRate = speed
   }, [speed])
+
+  useEffect(() => {
+    if (subtitle === 'Off') { setCues([]); setCurrentCue(null); return }
+    const src = SUBTITLE_SRCS[subtitle]
+    if (!src) return
+    async function loadCues() {
+      try {
+        const res = await fetch(src)
+        const text = await res.text()
+        setCues(parseVTT(text))
+      } catch {}
+    }
+    loadCues()
+  }, [subtitle])
+
+  useEffect(() => {
+    if (!cues.length) { setCurrentCue(null); return }
+    const cue = cues.find((c) => currentTime >= c.start && currentTime <= c.end)
+    setCurrentCue(cue?.text ?? null)
+  }, [currentTime, cues])
 
   useEffect(() => {
     const video = videoRef.current
@@ -219,5 +251,6 @@ export function usePlayerState(src: string, onEnded?: () => void) {
     setQuality,
     setSubtitle,
     setSettingsView,
+    currentCue,
   }
 }

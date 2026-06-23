@@ -3,7 +3,10 @@ import type { Metadata } from 'next'
 import { getSeriesById } from '@/data/series'
 
 type Props = {
-  params: Promise<{ seriesId: string; episode: string }>
+  params: Promise<{
+    seriesId: string
+    episode: string
+  }>
   children: ReactNode
 }
 

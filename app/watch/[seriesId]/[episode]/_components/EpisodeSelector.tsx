@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import type { Episode } from '@/types'
+import { useAuth } from '@/lib/auth'
 import { useStore } from '@/lib/store'
 
 type BatchTab = {
@@ -31,7 +32,9 @@ export default function EpisodeSelector({
   onBatchChange,
   onEpisodeSelect,
 }: Props) {
+  const { user } = useAuth()
   const { canWatch } = useStore()
+  const isSubscribed = user?.isSubscribed ?? false
 
   const activeBatchTab = batchTabs[activeBatch] ?? batchTabs[0]
   const visibleEpisodes = episodes.slice(activeBatchTab.start - 1, activeBatchTab.end)
@@ -72,7 +75,7 @@ export default function EpisodeSelector({
 
       <div className="grid grid-cols-7 gap-1.5">
         {visibleEpisodes.map((episode) => {
-          const isLocked = !canWatch(seriesId, episode.number, freeEpisodes)
+          const isLocked = !canWatch(seriesId, episode.number, freeEpisodes, isSubscribed)
           const isCurrent = episode.number === currentEpisode
           return (
             <button

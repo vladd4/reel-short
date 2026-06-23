@@ -1,14 +1,13 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Bebas_Neue, Geist, Geist_Mono } from 'next/font/google'
+import { AuthProvider } from '@/lib/auth'
 import { StoreProvider } from '@/lib/store'
 import Navbar from '@/components/layout/Navbar'
 import './globals.css'
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-})
+const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
+const bebasNeue = Bebas_Neue({ variable: '--font-bebas', weight: '400', subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: {
@@ -47,12 +46,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable}`}>
       <body className="min-h-screen bg-background text-foreground">
-        <StoreProvider>
-          <Navbar />
-          <div className="mx-auto max-w-[1536px]">{children}</div>
-        </StoreProvider>
+        <AuthProvider>
+          <StoreProvider>
+            <Navbar />
+            <div className="mx-auto max-w-[1536px]">{children}</div>
+          </StoreProvider>
+        </AuthProvider>
       </body>
     </html>
   )

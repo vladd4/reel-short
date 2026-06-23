@@ -1,4 +1,5 @@
 export { seriesService } from './series.service'
 export { authService } from './auth.service'
 export { paymentService } from './payment.service'
+export { billingService } from './billing.service'
 export { ApiError } from './http.client'

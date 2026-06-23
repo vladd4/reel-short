@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import type { Series } from '@/types'
 import { ROUTES } from '@/constants'
 
@@ -12,6 +13,7 @@ type Props = {
 }
 
 export default function SeriesCard({ series, className = '', size = 'sm' }: Props) {
+  const router = useRouter()
   const widthClass = size === 'lg' ? 'w-44 sm:w-52 md:w-56' : 'w-32 sm:w-36 md:w-40'
 
   return (
@@ -99,9 +101,8 @@ export default function SeriesCard({ series, className = '', size = 'sm' }: Prop
         >
           {series.description}
         </p>
-        <Link
-          href={ROUTES.watch(series.id, 1)}
-          onClick={(e) => e.stopPropagation()}
+        <button
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(ROUTES.watch(series.id, 1)) }}
           className="flex items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-bold text-white transition-all hover:brightness-110 active:scale-95"
           style={{ background: 'linear-gradient(90deg, #2b009f, #4500ff)' }}
         >
@@ -109,7 +110,7 @@ export default function SeriesCard({ series, className = '', size = 'sm' }: Prop
             <path d="M8 5v14l11-7z" />
           </svg>
           Watch
-        </Link>
+        </button>
       </div>
     </Link>
   )

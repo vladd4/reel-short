@@ -7,7 +7,7 @@ const CSP = [
   "img-src 'self' blob: data: https:",
   "media-src 'self' blob: https:",
   "font-src 'self' data: https://fonts.gstatic.com",
-  "connect-src 'self' https:",
+  "connect-src 'self' https: http://localhost:3005",
   "frame-ancestors 'none'",
 ].join('; ')
 

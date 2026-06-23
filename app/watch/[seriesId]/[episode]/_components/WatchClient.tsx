@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import type { Series } from '@/types'
-import { EPISODES_PER_BATCH, EPISODE_COST } from '@/constants'
+import { APP_DOWNLOAD_URL, EPISODES_PER_BATCH, EPISODE_COST } from '@/constants'
+import { useAuth } from '@/lib/auth'
 import { useStore } from '@/lib/store'
 import AppDownloadModal from '@/components/modals/AppDownloadModal'
 import ExclusiveOfferModal from '@/components/modals/ExclusiveOfferModal'
@@ -27,7 +28,9 @@ type Props = {
 
 export default function WatchClient({ series, initialEpisode, seriesId, related }: Props) {
   const router = useRouter()
+  const { user } = useAuth()
   const { canWatch } = useStore()
+  const isSubscribed = user?.isSubscribed ?? false
 
   const initialBatch = isNaN(initialEpisode)
     ? 0
@@ -45,7 +48,7 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
   const [showGift, setShowGift] = useState(false)
 
   const freeCount = series.freeEpisodes
-  const isUnlocked = canWatch(seriesId, currentEpisode, freeCount)
+  const isUnlocked = canWatch(seriesId, currentEpisode, freeCount, isSubscribed)
 
   useEffect(() => {
     if (!isUnlocked) {
@@ -201,9 +204,26 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
                     >
                       <CoinIcon /> {EPISODE_COST} Unlock Now
                     </button>
+                    <a
+                      href={APP_DOWNLOAD_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-semibold transition-all hover:brightness-125 active:scale-95 sm:hidden"
+                      style={{
+                        background: 'rgba(255,255,255,0.07)',
+                        border: '1px solid rgba(255,255,255,0.18)',
+                        color: 'rgba(255,255,255,0.85)',
+                        backdropFilter: 'blur(8px)',
+                      }}
+                    >
+                      <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
+                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+                      </svg>
+                      Watch for Free in App
+                    </a>
                     <button
                       onClick={() => setShowAppDownload(true)}
-                      className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-semibold transition-all hover:brightness-125 active:scale-95"
+                      className="hidden w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-semibold transition-all hover:brightness-125 active:scale-95 sm:flex"
                       style={{
                         background: 'rgba(255,255,255,0.07)',
                         border: '1px solid rgba(255,255,255,0.18)',
@@ -316,7 +336,7 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
       {showExclusiveOffer && <ExclusiveOfferModal onClose={() => setShowExclusiveOffer(false)} />}
       {showAppDownload && <AppDownloadModal onClose={() => setShowAppDownload(false)} />}
 
-      {paywallEpisode !== null && !canWatch(seriesId, paywallEpisode, series.freeEpisodes) && (
+      {paywallEpisode !== null && !canWatch(seriesId, paywallEpisode, series.freeEpisodes, isSubscribed) && (
         <PaywallModal
           seriesId={seriesId}
           episodeNumber={paywallEpisode}

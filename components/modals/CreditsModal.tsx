@@ -1,7 +1,7 @@
 'use client'
 
 import { CREDITS_PACKAGES } from '@/constants'
-import { useStore } from '@/lib/store'
+import { useAuth } from '@/lib/auth'
 import { useScrollLock } from '@/hooks/useScrollLock'
 import CloseButton from '@/components/ui/CloseButton'
 import CoinIcon from '@/components/ui/CoinIcon'
@@ -13,10 +13,11 @@ type Props = { onClose: () => void }
 export default function CreditsModal({ onClose }: Props) {
   useScrollLock()
 
-  const { coins, isSubscribed, addCoins, subscribe } = useStore()
+  const { user } = useAuth()
+  const coins = user?.credits ?? 0
+  const isSubscribed = user?.isSubscribed ?? false
 
-  function handleBuy(pkg: Package) {
-    addCoins(pkg.coins)
+  function handleBuy(_pkg: Package) {
     onClose()
   }
 
@@ -88,10 +89,7 @@ export default function CreditsModal({ onClose }: Props) {
               </p>
             </div>
             <button
-              onClick={() => {
-                subscribe()
-                onClose()
-              }}
+              onClick={onClose}
               className="flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-bold transition-all hover:brightness-110"
               style={{ background: 'linear-gradient(135deg, #4500ff, #8e00db)', color: '#fff' }}
             >

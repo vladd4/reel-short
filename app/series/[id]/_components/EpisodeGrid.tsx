@@ -9,7 +9,7 @@ type Props = {
 
 const LockIcon = () => (
   <span
-    className="absolute top-1 right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full"
+    className="absolute top-0.5 right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full"
     style={{ background: '#d60000' }}
   >
     <svg viewBox="0 0 24 24" fill="white" className="h-2 w-2">
@@ -27,12 +27,12 @@ export default function EpisodeGrid({ episodes, seriesId, totalCount }: Props) {
           {totalCount} total
         </span>
       </div>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="grid grid-cols-7 gap-1 sm:grid-cols-[repeat(auto-fill,minmax(80px,1fr))] sm:gap-1.5">
         {episodes.map((episode) => (
           <Link
             key={episode.number}
             href={`/watch/${seriesId}/${episode.number}`}
-            className="relative flex cursor-pointer items-center justify-center rounded-md px-8 py-5 transition-all duration-150 select-none hover:opacity-70 active:opacity-50"
+            className="relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md transition-all duration-150 select-none hover:opacity-70 active:opacity-50 sm:aspect-[3/2]"
             style={{
               background: 'rgba(255,255,255,0.06)',
               border: '1px solid transparent',

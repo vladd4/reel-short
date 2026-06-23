@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useStore } from '@/lib/store'
+import { useAuth } from '@/lib/auth'
 import { useScrollLock } from '@/hooks/useScrollLock'
 import { GIFT_ACTORS } from '@/data/gifts'
 import type { Actor, GiftItem } from '@/data/gifts'
@@ -25,7 +25,8 @@ const ORDERED_STEPS: GiftStep[] = ['choose', 'message', 'preview']
 export default function GiftModal({ onClose }: { onClose: () => void }) {
   useScrollLock()
 
-  const { coins, spendCoins } = useStore()
+  const { user } = useAuth()
+  const coins = user?.credits ?? 0
 
   const [isOpen, setIsOpen] = useState(false)
   const [step, setStep] = useState<GiftStep>('choose')
@@ -47,7 +48,6 @@ export default function GiftModal({ onClose }: { onClose: () => void }) {
 
   function handleSend() {
     if (!selectedGift) return
-    spendCoins(selectedGift.cost)
     setStep('success')
   }
 

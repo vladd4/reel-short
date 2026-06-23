@@ -32,11 +32,12 @@ export default function ShareModal({ series, onClose }: Props) {
     setTimeout(onClose, 280)
   }
 
-  function copyLink() {
-    navigator.clipboard.writeText(url).then(() => {
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(url)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
-    })
+    } catch {}
   }
 
   return (

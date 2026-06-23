@@ -96,7 +96,7 @@ export default function FeaturedBanner({ items }: Props) {
         key={s.id + '-content'}
         className="anim-fade-up absolute inset-0 flex flex-col justify-end px-6 pb-10 md:px-14 md:pb-14"
       >
-        <div className="max-w-lg">
+        <div className="max-w-2xl">
           <div className="mb-4 flex items-center gap-2">
             <span
               className="rounded-md px-2.5 py-1 text-[11px] font-bold tracking-widest uppercase"

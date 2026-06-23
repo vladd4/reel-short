@@ -7,7 +7,7 @@ const PANEL_STYLE = {
   boxShadow: '0 8px 40px rgba(0,0,0,0.7)',
 }
 
-const SUBTITLES = ['Off', 'English', 'Chinese', 'Spanish']
+const SUBTITLES = ['Off', 'English', 'Spanish', 'French', 'Portuguese', 'German', 'Ukrainian']
 
 type Props = {
   panelRef: RefObject<HTMLDivElement | null>

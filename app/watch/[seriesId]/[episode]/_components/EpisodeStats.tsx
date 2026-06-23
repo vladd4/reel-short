@@ -63,7 +63,12 @@ export default function EpisodeStats({
         <span className="text-xs font-medium">{series.views}</span>
       </button>
 
-      <FavoriteButton seriesId={seriesId} withLabel vertical style={{ color: 'rgba(255,255,255,0.6)' }} />
+      <FavoriteButton
+        seriesId={seriesId}
+        withLabel
+        vertical
+        style={{ color: 'rgba(255,255,255,0.6)' }}
+      />
 
       <button
         onClick={onShare}

@@ -1,8 +1,8 @@
 export const EPISODE_COST = 5
-export const STORAGE_KEY = 'nd-v1'
 
 export const EXCLUSIVE_OFFER_COINS = 550
 export const EXCLUSIVE_OFFER_PRICE = '$4.99'
+export const EXCLUSIVE_OFFER_PACK_CODE = 'pack_550'
 
 export const COIN_PACKS = [
   { total: 1150, immediate: 1000, free: 150, bonus: '+15%', price: '$9.99' },
