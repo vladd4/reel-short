@@ -6,6 +6,7 @@ import FavoritesRow from '@/components/series/FavoritesRow'
 import FeaturedBanner from '@/components/series/FeaturedBanner'
 import GenreRow from '@/components/series/GenreRow'
 import EmptyState from '@/components/ui/EmptyState'
+import MyMuseBanner from '@/components/series/MyMuseBanner'
 
 export const metadata: Metadata = {
   title: 'My Drama — Watch Short Drama Series Free',
@@ -91,6 +92,8 @@ export default async function Home({ searchParams }: Props) {
             )}
           </>
         )}
+
+        <MyMuseBanner />
       </div>
     </main>
   )
