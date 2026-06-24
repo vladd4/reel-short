@@ -104,15 +104,6 @@ export default function FeaturedBanner({ items }: Props) {
             >
               {s.subGenre}
             </span>
-            <span
-              className="rounded-md px-2.5 py-1 text-xs font-medium"
-              style={{
-                background: 'rgba(255,255,255,0.1)',
-                color: 'rgba(255,255,255,0.7)',
-              }}
-            >
-              ★ {s.rating}
-            </span>
             <span className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
               {s.views} views
             </span>

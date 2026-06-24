@@ -11,6 +11,7 @@ export class ApiError extends Error {
 const ACCESS_KEY = 'nd-access-token'
 const REFRESH_KEY = 'nd-refresh-token'
 const AUTH_COOKIE = 'nd-authed'
+const TOKEN_COOKIE = 'nd-token'
 
 function setAuthCookie(value: boolean) {
   if (typeof document === 'undefined') return
@@ -18,6 +19,15 @@ function setAuthCookie(value: boolean) {
     document.cookie = `${AUTH_COOKIE}=1; path=/; max-age=604800; SameSite=Lax`
   } else {
     document.cookie = `${AUTH_COOKIE}=; path=/; max-age=0`
+  }
+}
+
+function setTokenCookie(token: string | null) {
+  if (typeof document === 'undefined') return
+  if (token) {
+    document.cookie = `${TOKEN_COOKIE}=${token}; path=/; max-age=604800; SameSite=Lax`
+  } else {
+    document.cookie = `${TOKEN_COOKIE}=; path=/; max-age=0`
   }
 }
 
@@ -33,9 +43,11 @@ export function setAccessToken(token: string | null) {
   if (token) {
     storage()?.setItem(ACCESS_KEY, token)
     setAuthCookie(true)
+    setTokenCookie(token)
   } else {
     storage()?.removeItem(ACCESS_KEY)
     setAuthCookie(false)
+    setTokenCookie(null)
   }
 }
 
@@ -53,6 +65,7 @@ export function clearTokens() {
   storage()?.removeItem(ACCESS_KEY)
   storage()?.removeItem(REFRESH_KEY)
   setAuthCookie(false)
+  setTokenCookie(null)
 }
 
 export function loadStoredToken(): string | null {
@@ -90,12 +103,20 @@ export class HttpClient {
 
   private async request<T>(path: string, init: RequestInit = {}, isRetry = false, asText = false): Promise<T> {
     const url = `${this.baseUrl}${path}`
+
+    let token = _accessToken
+    if (!token && typeof window === 'undefined') {
+      const { cookies } = await import('next/headers')
+      const jar = await cookies()
+      token = jar.get(TOKEN_COOKIE)?.value ?? null
+    }
+
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       'ngrok-skip-browser-warning': 'true',
       ...(init.headers as Record<string, string>),
     }
-    if (_accessToken) headers['Authorization'] = `Bearer ${_accessToken}`
+    if (token) headers['Authorization'] = `Bearer ${token}`
 
     const res = await fetch(url, { ...init, headers })
 
