@@ -56,7 +56,7 @@ export default function SeriesBanner({ series }: { series: Series }) {
               border: `1px solid ${series.accentColor}55`,
             }}
           >
-            {series.subGenre}
+            {series.genres?.[0] ?? series.genre}
           </span>
           <span className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>
             · {series.year} · {series.totalEpisodes} eps

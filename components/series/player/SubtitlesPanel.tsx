@@ -1,4 +1,5 @@
 import type { RefObject } from 'react'
+import { languageName } from '@/lib/utils'
 
 const PANEL_STYLE = {
   background: 'rgba(13,13,20,0.97)',
@@ -7,12 +8,11 @@ const PANEL_STYLE = {
   boxShadow: '0 8px 40px rgba(0,0,0,0.7)',
 }
 
-const SUBTITLES = ['Off', 'English', 'Spanish', 'French', 'Portuguese', 'German', 'Ukrainian']
-
 type Props = {
   panelRef: RefObject<HTMLDivElement | null>
   isOpen: boolean
   subtitle: string
+  availableLanguages: string[]
   onSubtitleChange: (s: string) => void
   onClose: () => void
 }
@@ -21,10 +21,13 @@ export default function SubtitlesPanel({
   panelRef,
   isOpen,
   subtitle,
+  availableLanguages,
   onSubtitleChange,
   onClose,
 }: Props) {
   if (!isOpen) return null
+
+  const options = ['Off', ...availableLanguages]
 
   return (
     <div
@@ -40,7 +43,7 @@ export default function SubtitlesPanel({
           Subtitles
         </p>
       </div>
-      {SUBTITLES.map((s) => (
+      {options.map((s) => (
         <button
           key={s}
           onClick={() => {
@@ -50,7 +53,7 @@ export default function SubtitlesPanel({
           className="flex w-full items-center justify-between px-4 py-2.5 text-sm transition-colors hover:bg-white/[0.07]"
           style={{ color: subtitle === s ? '#fff' : 'rgba(255,255,255,0.55)' }}
         >
-          {s}
+          {s === 'Off' ? 'Off' : languageName(s)}
           {subtitle === s && (
             <svg
               viewBox="0 0 24 24"

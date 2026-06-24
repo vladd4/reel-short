@@ -20,8 +20,10 @@ type Props = {
   settingsView: SettingsView
   speed: number
   quality: string
+  availableLanguages: string[]
   subtitle: string
   episode: number
+  totalEpisodes?: number
   title: string
   hasPrev?: boolean
   hasNext?: boolean
@@ -62,8 +64,10 @@ export default function PlayerControls({
   settingsView,
   speed,
   quality,
+  availableLanguages,
   subtitle,
   episode,
+  totalEpisodes,
   title,
   hasPrev,
   hasNext,
@@ -93,7 +97,7 @@ export default function PlayerControls({
 
   return (
     <div
-      className="absolute inset-x-0 bottom-0 transition-opacity duration-300"
+      className="absolute inset-x-0 bottom-0 transition-opacity duration-150"
       style={{
         opacity: isVisible ? 1 : 0,
         pointerEvents: isVisible ? 'auto' : 'none',
@@ -107,7 +111,7 @@ export default function PlayerControls({
           className="text-[10px] font-semibold tracking-widest uppercase"
           style={{ color: 'rgba(255,255,255,0.38)' }}
         >
-          Episode {episode}
+          Episode {episode}{totalEpisodes ? ` / ${totalEpisodes}` : ''}
         </p>
         <p className="truncate text-sm leading-snug font-semibold text-white">{title}</p>
       </div>
@@ -199,27 +203,30 @@ export default function PlayerControls({
           {formatSeconds(currentTime)} / {formatSeconds(duration)}
         </span>
 
-        <div className="relative">
-          <button
-            onClick={onOpenSubtitles}
-            title="Subtitles"
-            className="rounded-lg p-2 transition-colors hover:bg-white/10"
-            style={{
-              color: isSubtitlesOpen || subtitle !== 'Off' ? '#fff' : 'rgba(255,255,255,0.5)',
-            }}
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-              <path d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 7H9.5v-.5h-2v3h2V13H11v1c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1zm7 0h-1.5v-.5h-2v3h2V13H18v1c0 .55-.45 1-1 1h-3c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1z" />
-            </svg>
-          </button>
-          <SubtitlesPanel
-            panelRef={subtitlesPanelRef}
-            isOpen={isSubtitlesOpen}
-            subtitle={subtitle}
-            onSubtitleChange={onSubtitleChange}
-            onClose={onCloseSubtitles}
-          />
-        </div>
+        {availableLanguages.length > 0 && (
+          <div className="relative">
+            <button
+              onClick={onOpenSubtitles}
+              title="Subtitles"
+              className="rounded-lg p-2 transition-colors hover:bg-white/10"
+              style={{
+                color: isSubtitlesOpen || subtitle !== 'Off' ? '#fff' : 'rgba(255,255,255,0.5)',
+              }}
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+                <path d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 7H9.5v-.5h-2v3h2V13H11v1c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1zm7 0h-1.5v-.5h-2v3h2V13H18v1c0 .55-.45 1-1 1h-3c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1z" />
+              </svg>
+            </button>
+            <SubtitlesPanel
+              panelRef={subtitlesPanelRef}
+              isOpen={isSubtitlesOpen}
+              subtitle={subtitle}
+              availableLanguages={availableLanguages}
+              onSubtitleChange={onSubtitleChange}
+              onClose={onCloseSubtitles}
+            />
+          </div>
+        )}
 
         <div className="relative">
           <button
@@ -248,7 +255,7 @@ export default function PlayerControls({
         <button
           onClick={onToggleFullscreen}
           title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-          className="rounded-lg p-2 transition-colors hover:bg-white/10"
+          className="hidden rounded-lg p-2 transition-colors hover:bg-white/10 lg:block"
           style={{ color: 'rgba(255,255,255,0.5)' }}
         >
           {isFullscreen ? (

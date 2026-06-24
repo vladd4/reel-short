@@ -1,9 +1,15 @@
+'use client'
+
 import Link from 'next/link'
 import type { Episode } from '@/types'
+import { ROUTES } from '@/constants'
+import { useAuth } from '@/lib/auth'
+import { useStore } from '@/lib/store'
 
 type Props = {
   episodes: Episode[]
   seriesId: string
+  seriesTitle: string
   totalCount: number
 }
 
@@ -18,7 +24,11 @@ const LockIcon = () => (
   </span>
 )
 
-export default function EpisodeGrid({ episodes, seriesId, totalCount }: Props) {
+export default function EpisodeGrid({ episodes, seriesId, seriesTitle, totalCount }: Props) {
+  const { user } = useAuth()
+  const { unlockedEpisodeIds } = useStore()
+  const isSubscribed = user?.isSubscribed ?? false
+
   return (
     <div className="mb-16">
       <div className="mb-5 flex items-center justify-between">
@@ -28,21 +38,24 @@ export default function EpisodeGrid({ episodes, seriesId, totalCount }: Props) {
         </span>
       </div>
       <div className="grid grid-cols-6 gap-1.5 sm:grid-cols-[repeat(auto-fill,minmax(80px,1fr))] sm:gap-1.5">
-        {episodes.map((episode) => (
-          <Link
-            key={episode.number}
-            href={`/watch/${seriesId}/${episode.number}`}
-            className="relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md transition-all duration-150 select-none hover:opacity-70 active:opacity-50 sm:aspect-[3/2]"
-            style={{
-              background: 'rgba(255,255,255,0.06)',
-              border: '1px solid transparent',
-              color: episode.free ? '#fff' : 'rgba(255,255,255,0.7)',
-            }}
-          >
-            {!episode.free && <LockIcon />}
-            <span className="text-xs font-semibold">{episode.number}</span>
-          </Link>
-        ))}
+        {episodes.map((episode) => {
+          const isLocked = episode.locked && !isSubscribed && !unlockedEpisodeIds.includes(episode.id)
+          return (
+            <Link
+              key={episode.number}
+              href={ROUTES.watch(seriesId, seriesTitle, episode.number)}
+              className="relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md transition-all duration-150 select-none hover:opacity-70 active:opacity-50 sm:aspect-[3/2]"
+              style={{
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid transparent',
+                color: isLocked ? 'rgba(255,255,255,0.7)' : '#fff',
+              }}
+            >
+              {isLocked && <LockIcon />}
+              <span className="text-xs font-semibold">{episode.number}</span>
+            </Link>
+          )
+        })}
       </div>
     </div>
   )

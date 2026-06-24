@@ -5,9 +5,11 @@ import { usePlayerState } from './player/usePlayerState'
 
 
 type Props = {
-  src: string
+  src: string | null
   title: string
   episode: number
+  episodeId?: number
+  totalEpisodes?: number
   ratio?: string
   fill?: boolean
   onEnded?: () => void
@@ -21,6 +23,8 @@ export default function VideoPlayer({
   src,
   title,
   episode,
+  episodeId,
+  totalEpisodes,
   ratio = '16/9',
   fill,
   onEnded,
@@ -29,7 +33,7 @@ export default function VideoPlayer({
   hasPrev,
   hasNext,
 }: Props) {
-  const player = usePlayerState(src, onEnded)
+  const player = usePlayerState(src ?? '', onEnded, episodeId)
   const controlsVisible =
     player.isControlsVisible || player.isSettingsOpen || player.isSubtitlesOpen
 
@@ -45,7 +49,7 @@ export default function VideoPlayer({
     >
       <video
         ref={player.videoRef}
-        src={src}
+        src={src ?? undefined}
         className="h-full w-full object-contain"
         playsInline
         autoPlay
@@ -72,14 +76,14 @@ export default function VideoPlayer({
           className="absolute inset-0 flex cursor-pointer items-center justify-center"
         >
           <div
-            className="flex h-16 w-16 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95"
+            className="flex h-13 w-13 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95"
             style={{
               background: 'rgba(255,255,255,0.1)',
               backdropFilter: 'blur(8px)',
               border: '1.5px solid rgba(255,255,255,0.22)',
             }}
           >
-            <svg viewBox="0 0 24 24" fill="white" className="h-7 w-7 translate-x-px">
+            <svg viewBox="0 0 24 24" fill="white" className="h-6 w-6 translate-x-px">
               <path d="M8 5v14l11-7z" />
             </svg>
           </div>
@@ -101,8 +105,10 @@ export default function VideoPlayer({
         settingsView={player.settingsView}
         speed={player.speed}
         quality={player.quality}
+        availableLanguages={player.availableLanguages}
         subtitle={player.subtitle}
         episode={episode}
+        totalEpisodes={totalEpisodes}
         title={title}
         hasPrev={hasPrev}
         hasNext={hasNext}

@@ -98,7 +98,7 @@ export default function AccountSettings({ refreshUser }: Props) {
               placeholder="New email address"
               value={newEmail}
               onChange={(e) => { setNewEmail(e.target.value); setEmailErrors((p) => ({ ...p, newEmail: '' })) }}
-              className="w-full rounded-xl px-4 py-3 text-sm text-white outline-none"
+              className="w-full rounded-xl px-4 py-3 text-base text-white outline-none"
               style={inputStyle(!!emailErrors.newEmail)}
             />
             <FieldError message={emailErrors.newEmail} />
@@ -109,7 +109,7 @@ export default function AccountSettings({ refreshUser }: Props) {
               placeholder="Current password"
               value={emailCurrentPw}
               onChange={(e) => { setEmailCurrentPw(e.target.value); setEmailErrors((p) => ({ ...p, currentPassword: '' })) }}
-              className="w-full rounded-xl px-4 py-3 text-sm text-white outline-none"
+              className="w-full rounded-xl px-4 py-3 text-base text-white outline-none"
               style={inputStyle(!!emailErrors.currentPassword)}
             />
             <FieldError message={emailErrors.currentPassword} />
@@ -157,7 +157,7 @@ export default function AccountSettings({ refreshUser }: Props) {
               placeholder="Current password"
               value={currentPw}
               onChange={(e) => { setCurrentPw(e.target.value); setPwErrors((p) => ({ ...p, currentPassword: '' })) }}
-              className="w-full rounded-xl px-4 py-3 text-sm text-white outline-none"
+              className="w-full rounded-xl px-4 py-3 text-base text-white outline-none"
               style={inputStyle(!!pwErrors.currentPassword)}
             />
             <FieldError message={pwErrors.currentPassword} />
@@ -168,7 +168,7 @@ export default function AccountSettings({ refreshUser }: Props) {
               placeholder="New password"
               value={newPw}
               onChange={(e) => { setNewPw(e.target.value); setPwErrors((p) => ({ ...p, newPassword: '' })) }}
-              className="w-full rounded-xl px-4 py-3 text-sm text-white outline-none"
+              className="w-full rounded-xl px-4 py-3 text-base text-white outline-none"
               style={inputStyle(!!pwErrors.newPassword)}
             />
             <FieldError message={pwErrors.newPassword} />

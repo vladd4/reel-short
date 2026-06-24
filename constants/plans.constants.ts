@@ -1,5 +1,3 @@
-export const SALE_TIMER_KEY = 'nd-sale-deadline'
-
 export const SUBSCRIPTION_PLANS = [
   {
     id: 'weekly',

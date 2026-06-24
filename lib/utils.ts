@@ -3,3 +3,33 @@ export function formatSeconds(seconds: number): string {
   const secs = Math.floor(seconds % 60)
   return `${minutes}:${String(secs).padStart(2, '0')}`
 }
+
+export function slugify(str: string): string {
+  return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
+
+export function parseId(slug: string): string {
+  return slug.split('-')[0]
+}
+
+const LANGUAGE_NAMES: Record<string, string> = {
+  en: 'English',
+  de: 'German',
+  es: 'Spanish',
+  fr: 'French',
+  pt: 'Portuguese',
+  uk: 'Ukrainian',
+  it: 'Italian',
+  pl: 'Polish',
+  ru: 'Russian',
+  zh: 'Chinese',
+  ja: 'Japanese',
+  ko: 'Korean',
+  ar: 'Arabic',
+  hi: 'Hindi',
+  tr: 'Turkish',
+}
+
+export function languageName(code: string): string {
+  return LANGUAGE_NAMES[code.toLowerCase()] ?? code.toUpperCase()
+}

@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/auth'
 import { useScrollLock } from '@/hooks/useScrollLock'
-import { GIFT_ACTORS } from '@/data/gifts'
-import type { Actor, GiftItem } from '@/data/gifts'
+import { giftsService, seriesService } from '@/services'
+import type { GiftItem } from '@/services'
+import type { Actor } from '@/data/gifts'
+import { parseId } from '@/lib/utils'
 import CloseButton from '@/components/ui/CloseButton'
 import CoinIcon from '@/components/ui/CoinIcon'
 import GiftStep from './gift/GiftStep'
@@ -22,33 +24,70 @@ const STEP_LABELS: Record<string, string> = {
 
 const ORDERED_STEPS: GiftStep[] = ['choose', 'message', 'preview']
 
-export default function GiftModal({ onClose }: { onClose: () => void }) {
+const AVATAR_COLORS = ['#7a5c3a', '#2d3a5c', '#4a1a4a', '#1a3a2a', '#3a3a1a', '#2a1a4a']
+
+function toInitials(name: string): string {
+  return name.split(' ').map((p) => p[0] ?? '').join('').slice(0, 2).toUpperCase()
+}
+
+export default function GiftModal({ onClose, seriesId }: { onClose: () => void; seriesId: string }) {
   useScrollLock()
 
-  const { user } = useAuth()
+  const { user, refreshUser } = useAuth()
   const coins = user?.credits ?? 0
 
   const [isOpen, setIsOpen] = useState(false)
   const [step, setStep] = useState<GiftStep>('choose')
-  const [selectedActor, setSelectedActor] = useState<Actor>(GIFT_ACTORS[0])
+  const [loading, setLoading] = useState(true)
+  const [gifts, setGifts] = useState<GiftItem[]>([])
+  const [actors, setActors] = useState<Actor[]>([])
+  const [selectedActor, setSelectedActor] = useState<Actor | null>(null)
   const [category, setCategory] = useState('popular')
   const [selectedGift, setSelectedGift] = useState<GiftItem | null>(null)
   const [message, setMessage] = useState('')
   const [attachedImage, setAttachedImage] = useState<string | null>(null)
+  const [isSending, setIsSending] = useState(false)
 
   useEffect(() => {
-    const id = requestAnimationFrame(() => setIsOpen(true))
-    return () => cancelAnimationFrame(id)
-  }, [])
+    const raf = requestAnimationFrame(() => setIsOpen(true))
+    async function loadData() {
+      try {
+        const [items, apiActors] = await Promise.all([
+          giftsService.getAll(),
+          seriesService.getActors(parseInt(parseId(seriesId), 10)),
+        ])
+        setGifts(items)
+        const mapped: Actor[] = apiActors.map((a, i) => ({
+          id: String(a.id),
+          initials: toInitials(a.name),
+          name: a.name.split(' ')[0] ?? a.name,
+          fullName: a.name,
+          avatarBg: AVATAR_COLORS[i % AVATAR_COLORS.length],
+        }))
+        setActors(mapped)
+        if (mapped.length > 0) setSelectedActor(mapped[0])
+      } catch {} finally {
+        setLoading(false)
+      }
+    }
+    loadData()
+    return () => cancelAnimationFrame(raf)
+  }, [seriesId])
 
   function handleClose() {
     setIsOpen(false)
     setTimeout(onClose, 300)
   }
 
-  function handleSend() {
-    if (!selectedGift) return
+  async function handleSend() {
+    if (!selectedGift || !selectedActor) return
+    setIsSending(true)
+    try {
+      await giftsService.send(selectedActor.id, selectedGift.code, message)
+    } catch {}
+    setIsSending(false)
     setStep('success')
+    ;(async () => { try { await refreshUser() } catch {} })()
   }
 
   function handleSendAnother() {
@@ -122,8 +161,11 @@ export default function GiftModal({ onClose }: { onClose: () => void }) {
           </div>
         )}
 
-        {step === 'choose' && (
+        {step === 'choose' && (loading || selectedActor) && (
           <GiftStep
+            loading={loading}
+            gifts={gifts}
+            actors={actors}
             selectedActor={selectedActor}
             selectedGift={selectedGift}
             category={category}
@@ -134,7 +176,7 @@ export default function GiftModal({ onClose }: { onClose: () => void }) {
           />
         )}
 
-        {step === 'message' && selectedGift && (
+        {step === 'message' && selectedGift && selectedActor && (
           <MessageStep
             selectedActor={selectedActor}
             selectedGift={selectedGift}
@@ -148,19 +190,20 @@ export default function GiftModal({ onClose }: { onClose: () => void }) {
           />
         )}
 
-        {step === 'preview' && selectedGift && (
+        {step === 'preview' && selectedGift && selectedActor && (
           <PreviewStep
             selectedActor={selectedActor}
             selectedGift={selectedGift}
             message={message}
             attachedImage={attachedImage}
             canAfford={canAfford}
+            isSending={isSending}
             onSend={handleSend}
             onBack={() => setStep('message')}
           />
         )}
 
-        {step === 'success' && selectedGift && (
+        {step === 'success' && selectedGift && selectedActor && (
           <SuccessStep
             selectedActor={selectedActor}
             selectedGift={selectedGift}

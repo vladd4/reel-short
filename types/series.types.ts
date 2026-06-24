@@ -1,9 +1,13 @@
 export type Episode = {
+  id: number
   number: number
   title: string
   duration: string
-  videoUrl: string
+  videoUrl: string | null
+  description?: string
   free: boolean
+  locked: boolean
+  priceCredits: number
 }
 
 export type CastMember = {

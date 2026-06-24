@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { type SyntheticEvent, useState } from 'react'
 import { SUPPORT_EMAIL, SUPPORT_PHONE, SUPPORT_PHONE_HREF } from '@/constants'
 import { useScrollLock } from '@/hooks/useScrollLock'
 import CloseButton from '@/components/ui/CloseButton'
@@ -15,7 +15,7 @@ export default function ContactModal({ onClose }: Props) {
   const [message, setMessage] = useState('')
   const [sent, setSent] = useState(false)
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!email || !message) return
     setSent(true)
@@ -73,7 +73,7 @@ export default function ContactModal({ onClose }: Props) {
               </div>
               <button
                 onClick={onClose}
-                className="mt-2 rounded-xl px-6 py-2.5 text-sm font-semibold transition-all hover:brightness-110"
+                className="mt-2 cursor-pointer rounded-xl px-6 py-2.5 text-sm font-semibold transition-all hover:brightness-110"
                 style={{
                   background: 'rgba(255,255,255,0.07)',
                   border: '1px solid rgba(255,255,255,0.1)',
@@ -107,7 +107,7 @@ export default function ContactModal({ onClose }: Props) {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   rows={5}
-                  className="w-full resize-none rounded-xl px-4 py-3 text-sm text-white transition-all outline-none placeholder:text-white/25"
+                  className="w-full resize-none rounded-xl px-4 py-3 text-base text-white transition-all outline-none placeholder:text-white/25"
                   style={{
                     background: 'rgba(255,255,255,0.05)',
                     border: '1px solid rgba(255,255,255,0.08)',
@@ -120,7 +120,7 @@ export default function ContactModal({ onClose }: Props) {
 
               <button
                 type="submit"
-                className="w-full rounded-xl py-3.5 text-sm font-bold text-white transition-all hover:brightness-110 active:scale-95"
+                className="w-full cursor-pointer rounded-xl py-3.5 text-sm font-bold text-white transition-all hover:brightness-110 active:scale-95"
                 style={{
                   background: 'linear-gradient(90deg, #2b009f, #4500ff)',
                   boxShadow: '0 4px 20px rgba(69,0,255,0.35)',

@@ -18,7 +18,7 @@ export default function SeriesCard({ series, className = '', size = 'sm' }: Prop
 
   return (
     <Link
-      href={ROUTES.series(series.id)}
+      href={ROUTES.watch(series.id, series.title, 1)}
       className={`group relative flex-shrink-0 ${widthClass} cursor-pointer overflow-hidden rounded-xl ${className}`}
       style={{ aspectRatio: '2/3', border: '1px solid rgba(255,255,255,0.1)' }}
     >
@@ -102,14 +102,14 @@ export default function SeriesCard({ series, className = '', size = 'sm' }: Prop
           {series.description}
         </p>
         <button
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(ROUTES.watch(series.id, 1)) }}
-          className="flex items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-bold text-white transition-all hover:brightness-110 active:scale-95"
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(ROUTES.series(series.id, series.title)) }}
+          className="flex cursor-pointer items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-bold text-white transition-all hover:brightness-110 active:scale-95"
           style={{ background: 'linear-gradient(90deg, #2b009f, #4500ff)' }}
         >
           <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5">
-            <path d="M8 5v14l11-7z" />
+            <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z" />
           </svg>
-          Watch
+          Details
         </button>
       </div>
     </Link>

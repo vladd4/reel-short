@@ -88,10 +88,10 @@ export default function SignInModal({ onClose, onContinue }: Props) {
       <form onSubmit={handleSubmit} className="px-7 pt-7 pb-8">
         <div className="mb-7 text-center">
           <h2 className="text-2xl font-bold text-white">
-            {mode === 'signin' ? 'Sign in' : 'Create account'}
+            {mode === 'signin' ? 'Welcome back' : 'Start watching free'}
           </h2>
           <p className="mt-1.5 text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>
-            {mode === 'signin' ? 'Welcome back' : 'Join My Drama today'}
+            {mode === 'signin' ? 'Sign in to continue watching' : 'Create your free account in seconds'}
           </p>
         </div>
 
@@ -148,12 +148,12 @@ export default function SignInModal({ onClose, onContinue }: Props) {
         </button>
 
 
-        {mode === 'register' ? (
-          <div className="flex flex-col items-center gap-1.5">
-            <label className="flex cursor-pointer items-center gap-2.5">
+        <div className="flex flex-col items-center gap-1">
+          <label className="flex cursor-pointer items-center justify-center gap-2">
+            {mode === 'register' && (
               <div
                 onClick={() => { setAgreedToTerms((v) => !v); setFieldErrors((fe) => ({ ...fe, terms: undefined })) }}
-                className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center rounded transition-colors"
+                className="flex h-3.5 w-3.5 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm transition-colors"
                 style={{
                   background: agreedToTerms ? '#4500ff' : 'transparent',
                   border: fieldErrors.terms
@@ -164,34 +164,24 @@ export default function SignInModal({ onClose, onContinue }: Props) {
                 }}
               >
                 {agreedToTerms && (
-                  <svg viewBox="0 0 24 24" fill="white" className="h-3 w-3">
+                  <svg viewBox="0 0 24 24" fill="white" className="h-2 w-2">
                     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                   </svg>
                 )}
               </div>
-              <span className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
-                I agree to the{' '}
-                <span className="cursor-pointer underline" style={{ color: '#7a90ff' }}>Terms of use</span>
-                {' '}and{' '}
-                <span className="cursor-pointer underline" style={{ color: '#7a90ff' }}>Privacy policy</span>
-              </span>
-            </label>
-            {fieldErrors.terms && (
-              <p className="text-xs" style={{ color: '#ff4d4d' }}>{fieldErrors.terms}</p>
             )}
-            <p className="text-[10px]" style={{ color: 'rgba(255,255,255,0.4)' }}>My Drama Inc.</p>
-          </div>
-        ) : (
-          <div className="space-y-1 text-center">
-            <p className="text-xs" style={{ color: 'rgba(255,255,255,0.55)' }}>
-              By continuing you accept our{' '}
+            <span className="text-xs" style={{ color: 'rgba(255,255,255,0.55)' }}>
+              {mode === 'register' ? 'I agree to the' : 'By continuing you accept our'}{' '}
               <span className="cursor-pointer underline" style={{ color: '#7a90ff' }}>Terms of use</span>
               {' '}and{' '}
               <span className="cursor-pointer underline" style={{ color: '#7a90ff' }}>Privacy policy</span>
-            </p>
-            <p className="text-[10px]" style={{ color: 'rgba(255,255,255,0.4)' }}>My Drama Inc.</p>
-          </div>
-        )}
+            </span>
+          </label>
+          <p className="h-4 text-xs text-center" style={{ color: '#ff4d4d' }}>
+            {fieldErrors.terms ?? ''}
+          </p>
+          <p className="text-[10px]" style={{ color: 'rgba(255,255,255,0.4)' }}>My Drama Inc.</p>
+        </div>
       </form>
     </BottomDrawer>
   )

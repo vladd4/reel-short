@@ -134,7 +134,7 @@ export default function FeaturedBanner({ items }: Props) {
 
           <div className="flex items-center gap-3">
             <Link
-              href={ROUTES.watch(s.id, 1)}
+              href={ROUTES.watch(s.id, s.title, 1)}
               className="flex items-center gap-2.5 rounded-xl px-6 py-3 text-sm font-bold transition-all hover:brightness-110 active:scale-95"
               style={{
                 background: 'linear-gradient(90deg, #2b009f, #4500ff)',
@@ -148,7 +148,7 @@ export default function FeaturedBanner({ items }: Props) {
               Watch Free
             </Link>
             <Link
-              href={ROUTES.series(s.id)}
+              href={ROUTES.series(s.id, s.title)}
               className="flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all hover:brightness-125"
               style={{
                 background: 'rgba(0,0,0,0.45)',

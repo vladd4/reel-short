@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import type { Series } from '@/types'
+import { ROUTES } from '@/constants'
 import { useScrollLock } from '@/hooks/useScrollLock'
 import CloseButton from '@/components/ui/CloseButton'
 
@@ -22,10 +23,11 @@ export default function ShareModal({ series, onClose }: Props) {
     return () => cancelAnimationFrame(id)
   }, [])
 
+  const seriesPath = ROUTES.series(series.id, series.title)
   const url =
     typeof window !== 'undefined'
-      ? `${window.location.origin}/series/${series.id}`
-      : `/series/${series.id}`
+      ? `${window.location.origin}${seriesPath}`
+      : seriesPath
 
   function handleClose() {
     setVisible(false)

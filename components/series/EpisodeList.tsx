@@ -3,9 +3,10 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { Episode, Series } from '@/types'
-import { EPISODE_COST } from '@/constants'
+import { ROUTES } from '@/constants'
 import { useAuth } from '@/lib/auth'
 import { useStore } from '@/lib/store'
+import { seriesService } from '@/services'
 import PaywallModal from '@/components/modals/PaywallModal'
 
 type Props = {
@@ -15,16 +16,33 @@ type Props = {
 
 export default function EpisodeList({ series, currentEpisode }: Props) {
   const router = useRouter()
-  const { user } = useAuth()
-  const { canWatch } = useStore()
+  const { user, refreshUser } = useAuth()
+  const { unlockedEpisodeIds, markEpisodeUnlocked } = useStore()
   const isSubscribed = user?.isSubscribed ?? false
+  const isLoggedIn = !!user
   const [paywallEp, setPaywallEp] = useState<number | null>(null)
+  const [purchasingEpId, setPurchasingEpId] = useState<number | null>(null)
 
-  function handleEpClick(ep: Episode) {
-    if (canWatch(series.id, ep.number, series.freeEpisodes, isSubscribed)) {
-      router.push(`/watch/${series.id}/${ep.number}`)
-    } else {
+  async function handleEpClick(ep: Episode) {
+    const unlocked = isSubscribed || !ep.locked || unlockedEpisodeIds.includes(ep.id)
+    if (unlocked) {
+      router.push(ROUTES.watch(series.id, series.title, ep.number))
+      return
+    }
+    if (!isLoggedIn) {
       setPaywallEp(ep.number)
+      return
+    }
+    setPurchasingEpId(ep.id)
+    try {
+      await seriesService.purchaseEpisode(ep.id)
+      markEpisodeUnlocked(ep.id)
+      ;(async () => { try { await refreshUser() } catch {} })()
+      router.push(ROUTES.watch(series.id, series.title, ep.number))
+    } catch {
+      setPaywallEp(ep.number)
+    } finally {
+      setPurchasingEpId(null)
     }
   }
 
@@ -32,8 +50,9 @@ export default function EpisodeList({ series, currentEpisode }: Props) {
     <>
       <div className="space-y-1.5">
         {series.episodes.map((ep) => {
-          const unlocked = canWatch(series.id, ep.number, series.freeEpisodes, isSubscribed)
+          const unlocked = isSubscribed || !ep.locked || unlockedEpisodeIds.includes(ep.id)
           const isCurrent = ep.number === currentEpisode
+          const isBuying = purchasingEpId === ep.id
 
           return (
             <button
@@ -92,9 +111,11 @@ export default function EpisodeList({ series, currentEpisode }: Props) {
               </div>
 
               <div className="flex-shrink-0">
-                {!ep.free && !unlocked ? (
-                  <span className="text-[9px] text-gold">◈ {EPISODE_COST}</span>
-                ) : !ep.free && unlocked ? (
+                {isBuying ? (
+                  <span className="text-[9px]" style={{ color: 'rgba(255,255,255,0.4)' }}>…</span>
+                ) : !unlocked ? (
+                  <span className="text-[9px] text-gold">◈ {ep.priceCredits || 5}</span>
+                ) : !ep.free ? (
                   <svg viewBox="0 0 24 24" fill="#009d69" className="h-3.5 w-3.5">
                     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                   </svg>
@@ -112,7 +133,7 @@ export default function EpisodeList({ series, currentEpisode }: Props) {
           seriesTitle={series.title}
           onClose={() => setPaywallEp(null)}
           onUnlocked={() => {
-            router.push(`/watch/${series.id}/${paywallEp}`)
+            router.push(ROUTES.watch(series.id, series.title, paywallEp))
             setPaywallEp(null)
           }}
         />

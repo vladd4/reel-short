@@ -5,7 +5,6 @@ import type { ApiUser } from '@/types'
 import { authService } from '@/services/auth.service'
 import {
   setAccessToken,
-  setRefreshToken,
   getRefreshToken,
   clearTokens,
   loadStoredToken,
@@ -53,20 +52,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  function storeSession(accessToken: string, refreshToken: string, apiUser: ApiUser) {
-    setAccessToken(accessToken)
-    setRefreshToken(refreshToken)
+  function storeSession(token: string, apiUser: ApiUser) {
+    setAccessToken(token)
     setUser(apiUser)
   }
 
   const login = useCallback(async (email: string, password: string) => {
     const res = await authService.login(email, password)
-    storeSession(res.tokens.accessToken, res.tokens.refreshToken, res.user)
+    storeSession(res.token, res.user)
   }, [])
 
   const register = useCallback(async (email: string, password: string) => {
     const res = await authService.register(email, password)
-    storeSession(res.tokens.accessToken, res.tokens.refreshToken, res.user)
+    storeSession(res.token, res.user)
   }, [])
 
   const logout = useCallback(async () => {

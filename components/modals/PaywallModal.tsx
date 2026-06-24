@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import type { CreditPack, SubscriptionPlan } from '@/types'
-import { PAYWALL_COUNTDOWN_S, SALE_TIMER_KEY } from '@/constants'
 import { useAuth } from '@/lib/auth'
 import { useCreditPacks } from '@/hooks/useCreditPacks'
 import { useScrollLock } from '@/hooks/useScrollLock'
@@ -36,7 +35,6 @@ export default function PaywallModal({
   const { packs, isLoading: packsLoading } = useCreditPacks()
   const { plans, isLoading: plansLoading } = useSubscriptionPlans()
 
-  const [seconds, setSeconds] = useState(0)
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null)
   const [selectedPack, setSelectedPack] = useState<CreditPack | null>(null)
   const [checkoutStep, setCheckoutStep] = useState<'signin' | 'payment' | null>(null)
@@ -47,26 +45,6 @@ export default function PaywallModal({
     const id = requestAnimationFrame(() => setVisible(true))
     return () => cancelAnimationFrame(id)
   }, [])
-
-  useEffect(() => {
-    const now = Date.now()
-    const stored = localStorage.getItem(SALE_TIMER_KEY)
-    let deadline: number
-    if (stored) {
-      deadline = parseInt(stored, 10)
-    } else {
-      deadline = now + PAYWALL_COUNTDOWN_S * 1000
-      localStorage.setItem(SALE_TIMER_KEY, String(deadline))
-    }
-    const tick = () => setSeconds(Math.max(0, Math.round((deadline - Date.now()) / 1000)))
-    tick()
-    const id = setInterval(tick, 1000)
-    return () => clearInterval(id)
-  }, [])
-
-  const saleActive = seconds > 0
-  const mins = String(Math.floor(seconds / 60)).padStart(2, '0')
-  const secs = String(seconds % 60).padStart(2, '0')
 
   function handleClose() {
     setVisible(false)
@@ -142,63 +120,6 @@ export default function PaywallModal({
             />
           </div>
 
-          {saleActive && (
-            <div
-              className="relative flex-shrink-0 overflow-hidden px-5 py-4"
-              style={{
-                background: 'linear-gradient(135deg, #111114 0%, #0a0a0c 60%, #0d0d10 100%)',
-                borderBottom: '1px solid rgba(255,255,255,0.06)',
-              }}
-            >
-              <div
-                className="pointer-events-none absolute -top-6 -left-6 h-32 w-32 rounded-full"
-                style={{
-                  background: 'radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%)',
-                }}
-              />
-              <div
-                className="pointer-events-none absolute right-16 -bottom-8 h-28 w-28 rounded-full"
-                style={{
-                  background: 'radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%)',
-                }}
-              />
-              <div className="relative flex items-center justify-between gap-3">
-                <div>
-                  <p
-                    className="mb-0.5 text-xs font-semibold tracking-widest uppercase"
-                    style={{ color: 'rgba(255,255,255,0.45)' }}
-                  >
-                    Limited time
-                  </p>
-                  <p className="text-base leading-tight font-bold text-white">
-                    Newby Sale — <span style={{ color: '#7a90ff' }}>67% OFF</span>
-                  </p>
-                </div>
-                <div
-                  className="flex items-center gap-1.5 rounded-lg px-3 py-1.5"
-                  style={{
-                    background: 'rgba(0,0,0,0.35)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                  }}
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className="h-3.5 w-3.5"
-                    style={{ color: '#7a90ff' }}
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                  <span className="font-mono text-sm font-bold text-white tabular-nums">
-                    {mins}:{secs}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
 
           <div className="scrollbar-hide overflow-y-auto">
             <div className="space-y-6 px-5 pt-5 pb-6">
@@ -250,15 +171,7 @@ export default function PaywallModal({
                             <span className="text-2xl font-bold" style={{ color: '#1a1205' }}>
                               ${p.price}
                             </span>
-                            {saleActive && (
-                              <span
-                                className="rounded px-1.5 py-0.5 text-[10px] font-bold"
-                                style={{ background: '#d60000', color: '#fff' }}
-                              >
-                                SALE
-                              </span>
-                            )}
-                          </div>
+                            </div>
                           <p
                             className="mb-4 text-[10px] font-medium"
                             style={{ color: 'rgba(26,18,5,0.7)' }}

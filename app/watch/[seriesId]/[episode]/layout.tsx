@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
-import { getSeriesById } from '@/data/series'
+import { seriesService } from '@/services'
+import { parseId } from '@/lib/utils'
 
 type Props = {
   params: Promise<{
@@ -11,8 +12,8 @@ type Props = {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { seriesId, episode } = await params
-  const series = getSeriesById(seriesId)
+  const { seriesId: seriesSlug, episode } = await params
+  const series = await seriesService.getById(parseId(seriesSlug))
   if (!series) return {}
 
   const epNum = parseInt(episode, 10)

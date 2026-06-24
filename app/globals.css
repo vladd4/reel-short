@@ -138,8 +138,12 @@ video::-webkit-media-controls {
 @media (max-width: 1023px) {
   .video-sizer {
     width: 100vw !important;
-    height: calc(100dvh - 64px) !important;
+    height: 100dvh !important;
     aspect-ratio: unset !important;
+  }
+  .mobile-expanded .video-sizer {
+    width: 100% !important;
+    height: 650px !important;
   }
 }
 @media (min-width: 1024px) {
@@ -203,5 +207,18 @@ video::-webkit-media-controls {
 @media (min-width: 640px) {
   .modal-drawer {
     border-radius: 20px;
+  }
+}
+@media (min-width: 1024px) {
+  .episode-grid {
+    grid-template-columns: repeat(8, 1fr);
+    gap: 4px;
+  }
+  .episode-grid .episode-number {
+    font-size: 10px;
+  }
+  .episode-grid .episode-lock {
+    height: 12px;
+    width: 12px;
   }
 }

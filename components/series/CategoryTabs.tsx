@@ -9,17 +9,17 @@ type Props = {
 export default function CategoryTabs({ categories }: Props) {
   const router = useRouter()
   const params = useSearchParams()
-  const active = params.get('genre') ?? 'All'
+  const active = (params.get('genre') ?? '').toLowerCase() || 'all'
 
   function select(cat: string) {
     if (cat === 'All') router.push('/')
-    else router.push(`/?genre=${cat}`)
+    else router.push(`/?genre=${cat.toLowerCase()}`)
   }
 
   return (
     <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-1">
       {categories.map((c) => {
-        const isActive = c === active || (c === 'All' && active === 'All')
+        const isActive = c.toLowerCase() === active
         return (
           <button
             key={c}

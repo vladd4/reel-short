@@ -2,8 +2,10 @@
 
 import Link from 'next/link'
 import type { Episode } from '@/types'
+import { ROUTES } from '@/constants'
 import { useAuth } from '@/lib/auth'
 import { useStore } from '@/lib/store'
+
 
 type BatchTab = {
   start: number
@@ -17,7 +19,7 @@ type Props = {
   activeBatch: number
   currentEpisode: number
   seriesId: string
-  freeEpisodes: number
+  seriesTitle: string
   onBatchChange: (index: number) => void
   onEpisodeSelect: (n: number) => void
 }
@@ -28,12 +30,12 @@ export default function EpisodeSelector({
   activeBatch,
   currentEpisode,
   seriesId,
-  freeEpisodes,
+  seriesTitle,
   onBatchChange,
   onEpisodeSelect,
 }: Props) {
   const { user } = useAuth()
-  const { canWatch } = useStore()
+  const { unlockedEpisodeIds } = useStore()
   const isSubscribed = user?.isSubscribed ?? false
 
   const activeBatchTab = batchTabs[activeBatch] ?? batchTabs[0]
@@ -46,23 +48,23 @@ export default function EpisodeSelector({
         style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
       >
         {batchTabs.map((tab, i) => (
-          <button
-            key={i}
-            onClick={() => onBatchChange(i)}
-            className="relative px-4 py-2.5 text-sm font-medium transition-colors"
-            style={{ color: activeBatch === i ? '#fff' : 'rgba(255,255,255,0.4)' }}
-          >
-            {tab.label}
-            {activeBatch === i && (
-              <span
-                className="absolute right-0 bottom-0 left-0 h-0.5 rounded-full"
-                style={{ background: '#4500ff' }}
-              />
-            )}
-          </button>
-        ))}
+            <button
+              key={i}
+              onClick={() => onBatchChange(i)}
+              className="relative px-4 py-2.5 text-sm font-medium transition-colors"
+              style={{ color: activeBatch === i ? '#fff' : 'rgba(255,255,255,0.4)' }}
+            >
+              {tab.label}
+              {activeBatch === i && (
+                <span
+                  className="absolute right-0 bottom-0 left-0 h-0.5 rounded-full"
+                  style={{ background: '#4500ff' }}
+                />
+              )}
+            </button>
+          ))}
         <Link
-          href={`/series/${seriesId}`}
+          href={ROUTES.series(seriesId, seriesTitle)}
           className="ml-auto flex items-center gap-1 pb-2.5 text-xs transition-colors hover:text-foreground"
           style={{ color: 'rgba(255,255,255,0.4)' }}
         >
@@ -73,9 +75,9 @@ export default function EpisodeSelector({
         </Link>
       </div>
 
-      <div className="grid grid-cols-6 gap-1.5">
+      <div className="episode-grid grid grid-cols-6 gap-1.5">
         {visibleEpisodes.map((episode) => {
-          const isLocked = !canWatch(seriesId, episode.number, freeEpisodes, isSubscribed)
+          const isLocked = episode.locked && !isSubscribed && !unlockedEpisodeIds.includes(episode.id)
           const isCurrent = episode.number === currentEpisode
           return (
             <button
@@ -90,7 +92,7 @@ export default function EpisodeSelector({
             >
               {isLocked && (
                 <span
-                  className="absolute top-0.5 right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full"
+                  className="episode-lock absolute top-0.5 right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full"
                   style={{ background: '#d60000' }}
                 >
                   <svg viewBox="0 0 24 24" fill="white" className="h-2 w-2">
@@ -99,7 +101,7 @@ export default function EpisodeSelector({
                 </span>
               )}
               <span
-                className="text-xs font-semibold"
+                className="episode-number text-xs font-semibold"
                 style={{ color: isCurrent ? '#fff' : 'rgba(255,255,255,0.7)' }}
               >
                 {episode.number}

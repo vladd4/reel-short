@@ -1,10 +1,12 @@
 import type { MetadataRoute } from 'next'
-import { SITE_URL } from '@/constants'
-import { ALL_SERIES } from '@/data/series'
+import { SITE_URL, ROUTES } from '@/constants'
+import { seriesService } from '@/services'
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const seriesPages: MetadataRoute.Sitemap = ALL_SERIES.map((s) => ({
-    url: `${SITE_URL}/series/${s.id}`,
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const allSeries = await seriesService.getAll().catch(() => [])
+
+  const seriesPages: MetadataRoute.Sitemap = allSeries.map((s) => ({
+    url: `${SITE_URL}${ROUTES.series(s.id, s.title)}`,
     changeFrequency: 'weekly',
     priority: 0.8,
   }))

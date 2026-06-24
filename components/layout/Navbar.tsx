@@ -27,7 +27,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className="fixed inset-x-0 top-0 z-50"
+        className="site-navbar fixed inset-x-0 top-0 z-50"
         style={{
           background: `rgba(6,6,10,${(scrollProgress * 0.55).toFixed(3)})`,
           backdropFilter: `blur(${(scrollProgress * 12).toFixed(1)}px) saturate(${(100 + scrollProgress * 60).toFixed(0)}%)`,

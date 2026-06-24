@@ -3,6 +3,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { seriesService } from '@/services'
+import { ROUTES } from '@/constants'
+import { parseId } from '@/lib/utils'
 import FavoriteButton from '@/components/series/FavoriteButton'
 import GenreRow from '@/components/series/GenreRow'
 import ShareButton from '@/components/series/ShareButton'
@@ -18,8 +20,8 @@ type Props = {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params
-  const series = await seriesService.getById(id)
+  const { id: slug } = await params
+  const series = await seriesService.getById(parseId(slug))
   if (!series) return {}
 
   const images = series.bannerImage
@@ -53,12 +55,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function SeriesPage({ params }: Props) {
-  const { id } = await params
+  const { id: slug } = await params
+  const id = parseId(slug)
   const series = await seriesService.getById(id)
   if (!series) notFound()
 
   const relatedSeries = await seriesService.getRelated(id, series.genre)
-  const genres = series.genres ?? [series.genre, series.subGenre]
+  const genres = (series.tags ?? []).filter(Boolean)
 
   return (
     <main className="min-h-screen pb-20" style={{ background: 'var(--background)' }}>
@@ -135,7 +138,7 @@ export default async function SeriesPage({ params }: Props) {
 
             <div className="mt-4 flex flex-col items-stretch gap-2.5 sm:mt-8 sm:flex-row sm:items-center sm:gap-3">
               <Link
-                href={`/watch/${series.id}/1`}
+                href={ROUTES.watch(series.id, series.title, 1)}
                 className="flex items-center justify-center gap-2.5 rounded-xl px-5 py-3 text-sm font-bold transition-all hover:opacity-85 active:scale-95 active:opacity-70 sm:px-7"
                 style={{ background: '#4500ff', color: '#fff' }}
               >
@@ -179,11 +182,14 @@ export default async function SeriesPage({ params }: Props) {
           </div>
         )}
 
-        <EpisodeGrid
-          episodes={series.episodes}
-          seriesId={series.id}
-          totalCount={series.totalEpisodes}
-        />
+        {series.episodes.length > 0 && (
+          <EpisodeGrid
+            episodes={series.episodes}
+            seriesId={series.id}
+            seriesTitle={series.title}
+            totalCount={series.totalEpisodes}
+          />
+        )}
 
         {relatedSeries.length > 0 && (
           <GenreRow genre="More Like This" series={relatedSeries} showMoreButton={false} />

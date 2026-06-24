@@ -1,9 +1,13 @@
-import type { Actor, GiftItem } from '@/data/gifts'
-import { GIFT_ACTORS, GIFT_CATEGORIES, GIFT_ITEMS, GIFT_TIER_STYLES } from '@/data/gifts'
+import type { GiftItem } from '@/services'
+import type { Actor } from '@/data/gifts'
+import { GIFT_CATEGORIES, GIFT_TIER_STYLES } from '@/data/gifts'
 import CoinIcon from '@/components/ui/CoinIcon'
 
 type Props = {
-  selectedActor: Actor
+  loading?: boolean
+  gifts: GiftItem[]
+  actors: Actor[]
+  selectedActor: Actor | null
   selectedGift: GiftItem | null
   category: string
   onActorSelect: (actor: Actor) => void
@@ -13,6 +17,9 @@ type Props = {
 }
 
 export default function GiftStep({
+  loading,
+  gifts,
+  actors,
   selectedActor,
   selectedGift,
   category,
@@ -21,6 +28,8 @@ export default function GiftStep({
   onGiftSelect,
   onContinue,
 }: Props) {
+  const visibleGifts = gifts.filter((g) => g.tier === category)
+
   return (
     <div className="px-5 pb-6">
       <p
@@ -30,34 +39,41 @@ export default function GiftStep({
         TO
       </p>
       <div className="scrollbar-hide mb-4 flex gap-5 overflow-x-auto px-1 py-1">
-        {GIFT_ACTORS.map((actor) => (
-          <button
-            key={actor.id}
-            onClick={() => onActorSelect(actor)}
-            className="flex flex-shrink-0 cursor-pointer flex-col items-center gap-2"
-          >
-            <div
-              className="flex h-16 w-16 items-center justify-center rounded-full text-base font-bold text-white"
-              style={{
-                background: actor.avatarBg,
-                boxShadow:
-                  selectedActor.id === actor.id
-                    ? '0 0 0 3px #4500ff, 0 0 0 5px rgba(69,0,255,0.25)'
-                    : 'none',
-              }}
-            >
-              {actor.initials}
-            </div>
-            <span
-              className="text-xs font-medium"
-              style={{
-                color: selectedActor.id === actor.id ? '#a89fff' : 'rgba(255,255,255,0.45)',
-              }}
-            >
-              {actor.name}
-            </span>
-          </button>
-        ))}
+        {loading
+          ? Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="flex flex-shrink-0 flex-col items-center gap-2">
+                <div className="h-16 w-16 animate-pulse rounded-full" style={{ background: 'rgba(255,255,255,0.08)' }} />
+                <div className="h-3 w-10 animate-pulse rounded" style={{ background: 'rgba(255,255,255,0.08)' }} />
+              </div>
+            ))
+          : actors.map((actor) => (
+              <button
+                key={actor.id}
+                onClick={() => onActorSelect(actor)}
+                className="flex flex-shrink-0 cursor-pointer flex-col items-center gap-2"
+              >
+                <div
+                  className="flex h-16 w-16 items-center justify-center rounded-full text-base font-bold text-white"
+                  style={{
+                    background: actor.avatarBg,
+                    boxShadow:
+                      selectedActor?.id === actor.id
+                        ? '0 0 0 3px #4500ff, 0 0 0 5px rgba(69,0,255,0.25)'
+                        : 'none',
+                  }}
+                >
+                  {actor.initials}
+                </div>
+                <span
+                  className="text-xs font-medium"
+                  style={{
+                    color: selectedActor?.id === actor.id ? '#a89fff' : 'rgba(255,255,255,0.45)',
+                  }}
+                >
+                  {actor.name}
+                </span>
+              </button>
+            ))}
       </div>
 
       <div className="scrollbar-hide mb-4 flex gap-2 overflow-x-auto">
@@ -79,8 +95,20 @@ export default function GiftStep({
       </div>
 
       <div className="grid grid-cols-3 gap-3">
-        {GIFT_ITEMS[category].map((gift) => {
-          const tierStyle = GIFT_TIER_STYLES[gift.tier]
+        {loading
+          ? Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="flex animate-pulse flex-col items-center gap-1.5 rounded-2xl p-3"
+                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
+              >
+                <div className="mt-1 h-8 w-8 rounded" style={{ background: 'rgba(255,255,255,0.08)' }} />
+                <div className="h-3 w-14 rounded" style={{ background: 'rgba(255,255,255,0.08)' }} />
+                <div className="h-3 w-10 rounded" style={{ background: 'rgba(227,161,25,0.15)' }} />
+              </div>
+            ))
+          : visibleGifts.map((gift) => {
+          const tierStyle = GIFT_TIER_STYLES[gift.tier] ?? GIFT_TIER_STYLES['popular']
           const isSelected = selectedGift?.id === gift.id
           return (
             <button

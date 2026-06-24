@@ -1,4 +1,5 @@
-import type { Actor, GiftItem } from '@/data/gifts'
+import type { Actor } from '@/data/gifts'
+import type { GiftItem } from '@/services'
 import CoinIcon from '@/components/ui/CoinIcon'
 
 type Props = {
@@ -7,6 +8,7 @@ type Props = {
   message: string
   attachedImage: string | null
   canAfford: boolean
+  isSending: boolean
   onSend: () => void
   onBack: () => void
 }
@@ -17,6 +19,7 @@ export default function PreviewStep({
   message,
   attachedImage,
   canAfford,
+  isSending,
   onSend,
   onBack,
 }: Props) {
@@ -76,25 +79,33 @@ export default function PreviewStep({
 
       <button
         onClick={onSend}
-        disabled={!canAfford}
+        disabled={!canAfford || isSending}
         className="w-full rounded-xl py-4 text-sm font-bold transition-all"
         style={{
           background: canAfford
             ? 'linear-gradient(90deg, #2b009f 0%, #4500ff 100%)'
             : 'rgba(255,255,255,0.07)',
           color: canAfford ? '#fff' : 'rgba(255,255,255,0.25)',
-          cursor: canAfford ? 'pointer' : 'default',
+          cursor: canAfford && !isSending ? 'pointer' : 'default',
           boxShadow: canAfford ? '0 4px 20px rgba(69,0,255,0.4)' : 'none',
+          opacity: isSending ? 0.7 : 1,
         }}
       >
-        Send gift to {selectedActor.name}
+        {isSending ? 'Sending…' : `Send gift to ${selectedActor.name}`}
       </button>
       <button
         onClick={onBack}
-        className="w-full cursor-pointer pb-1 text-center text-sm transition-colors hover:text-white/60"
-        style={{ color: 'rgba(255,255,255,0.3)' }}
+        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-semibold transition-all hover:brightness-110 active:scale-95"
+        style={{
+          background: 'rgba(255,255,255,0.08)',
+          border: '1px solid rgba(255,255,255,0.12)',
+          color: 'rgba(255,255,255,0.75)',
+        }}
       >
-        Back to message
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back to Message
       </button>
     </div>
   )

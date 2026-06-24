@@ -88,10 +88,11 @@ async function tryRefresh(): Promise<boolean> {
 export class HttpClient {
   protected baseUrl = process.env.NEXT_PUBLIC_API_URL ?? ''
 
-  private async request<T>(path: string, init: RequestInit = {}, isRetry = false): Promise<T> {
+  private async request<T>(path: string, init: RequestInit = {}, isRetry = false, asText = false): Promise<T> {
     const url = `${this.baseUrl}${path}`
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true',
       ...(init.headers as Record<string, string>),
     }
     if (_accessToken) headers['Authorization'] = `Bearer ${_accessToken}`
@@ -103,7 +104,7 @@ export class HttpClient {
         _refreshPromise = tryRefresh().finally(() => { _refreshPromise = null })
       }
       const refreshed = await _refreshPromise
-      if (refreshed) return this.request<T>(path, init, true)
+      if (refreshed) return this.request<T>(path, init, true, asText)
       let text: string
       try { text = await res.text() } catch { text = res.statusText }
       throw new ApiError(401, text)
@@ -115,11 +116,16 @@ export class HttpClient {
       throw new ApiError(res.status, text)
     }
 
+    if (asText) return res.text() as Promise<T>
     return res.json() as Promise<T>
   }
 
   protected get<T>(path: string, init?: RequestInit): Promise<T> {
     return this.request<T>(path, { ...init, method: 'GET' })
+  }
+
+  protected getText(path: string, init?: RequestInit): Promise<string> {
+    return this.request<string>(path, { ...init, method: 'GET' }, false, true)
   }
 
   protected post<T>(path: string, body: unknown, init?: RequestInit): Promise<T> {

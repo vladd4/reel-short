@@ -1,17 +1,10 @@
 import type { ApiUser } from '@/types'
 import { HttpClient } from './http.client'
 
-export type AuthTokens = {
-  accessToken: string
-  refreshToken: string
-  tokenType: string
-  accessTokenExpiresAt: string
-  refreshTokenExpiresAt: string
-}
-
 export type AuthResponse = {
   user: ApiUser
-  tokens: AuthTokens
+  token: string
+  expiresAt: string
 }
 
 class AuthService extends HttpClient {

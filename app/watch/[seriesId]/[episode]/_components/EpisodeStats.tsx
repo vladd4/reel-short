@@ -1,13 +1,14 @@
 'use client'
 
+import { useState } from 'react'
 import type { Series } from '@/types'
 import FavoriteButton from '@/components/series/FavoriteButton'
+import SignInModal from '@/components/modals/SignInModal'
+import { useAuth } from '@/lib/auth'
 
 type Props = {
   series: Series
   seriesId: string
-  isLiked: boolean
-  onToggleLike: () => void
   onShare: () => void
   onGift: () => void
 }
@@ -15,12 +16,19 @@ type Props = {
 export default function EpisodeStats({
   series,
   seriesId,
-  isLiked,
-  onToggleLike,
   onShare,
   onGift,
 }: Props) {
+  const { isLoggedIn } = useAuth()
+  const [showSignIn, setShowSignIn] = useState(false)
+
+  function handleGift() {
+    if (!isLoggedIn) { setShowSignIn(true); return }
+    onGift()
+  }
+
   return (
+    <>
     <div
       className="flex items-center gap-6"
       style={{
@@ -29,14 +37,13 @@ export default function EpisodeStats({
         padding: '14px 0',
       }}
     >
-      <button
-        onClick={onToggleLike}
-        className="flex cursor-pointer flex-col items-center gap-1.5 transition-opacity hover:opacity-70 active:opacity-50"
-        style={{ color: isLiked ? '#d60000' : 'rgba(255,255,255,0.6)' }}
+      <div
+        className="flex flex-col items-center gap-1.5"
+        style={{ color: 'rgba(255,255,255,0.6)' }}
       >
         <svg
           viewBox="0 0 24 24"
-          fill={isLiked ? 'currentColor' : 'none'}
+          fill="currentColor"
           stroke="currentColor"
           strokeWidth="2"
           className="h-6 w-6"
@@ -44,10 +51,10 @@ export default function EpisodeStats({
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
         </svg>
         <span className="text-xs font-medium">{series.likes}</span>
-      </button>
+      </div>
 
-      <button
-        className="flex flex-col items-center gap-1.5 transition-opacity hover:opacity-70 active:opacity-50"
+      <div
+        className="flex flex-col items-center gap-1.5"
         style={{ color: 'rgba(255,255,255,0.6)' }}
       >
         <svg
@@ -61,7 +68,7 @@ export default function EpisodeStats({
           <circle cx="12" cy="12" r="3" />
         </svg>
         <span className="text-xs font-medium">{series.views}</span>
-      </button>
+      </div>
 
       <FavoriteButton
         seriesId={seriesId}
@@ -90,7 +97,7 @@ export default function EpisodeStats({
       </button>
 
       <button
-        onClick={onGift}
+        onClick={handleGift}
         className="ml-auto flex cursor-pointer items-center gap-2 rounded-full px-4 py-2.5 text-sm font-bold text-white transition-all hover:brightness-110 active:scale-95"
         style={{
           background: 'linear-gradient(135deg, #f97316, #fb923c)',
@@ -103,5 +110,9 @@ export default function EpisodeStats({
         Gift an Actor
       </button>
     </div>
+    {showSignIn && (
+      <SignInModal onClose={() => setShowSignIn(false)} onContinue={() => setShowSignIn(false)} />
+    )}
+    </>
   )
 }

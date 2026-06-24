@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import type { Series } from '@/types'
-import { APP_DOWNLOAD_URL, EPISODES_PER_BATCH, EPISODE_COST } from '@/constants'
+import type { Episode, Series } from '@/types'
+import { APP_DOWNLOAD_URL, EPISODES_PER_BATCH, EPISODE_COST, ROUTES } from '@/constants'
 import { useAuth } from '@/lib/auth'
 import { useStore } from '@/lib/store'
+import { seriesService } from '@/services'
 import AppDownloadModal from '@/components/modals/AppDownloadModal'
 import ExclusiveOfferModal from '@/components/modals/ExclusiveOfferModal'
 import GiftModal from '@/components/modals/GiftModal'
@@ -28,27 +29,85 @@ type Props = {
 
 export default function WatchClient({ series, initialEpisode, seriesId, related }: Props) {
   const router = useRouter()
-  const { user } = useAuth()
-  const { canWatch } = useStore()
+  const { user, refreshUser } = useAuth()
+  const { unlockedEpisodeIds, markEpisodeUnlocked } = useStore()
   const isSubscribed = user?.isSubscribed ?? false
+  const isLoggedIn = !!user
 
   const initialBatch = isNaN(initialEpisode)
     ? 0
     : Math.floor((initialEpisode - 1) / EPISODES_PER_BATCH)
   const [currentEpisode, setCurrentEpisode] = useState(initialEpisode)
   const [activeBatch, setActiveBatch] = useState(initialBatch)
+  const [episodeData, setEpisodeData] = useState<Episode | null>(null)
   const [isDescExpanded, setIsDescExpanded] = useState(false)
   const [paywallEpisode, setPaywallEpisode] = useState<number | null>(null)
   const [paywallShowCoins, setPaywallShowCoins] = useState(false)
-  const [isLiked, setIsLiked] = useState(false)
   const [showExclusiveOffer, setShowExclusiveOffer] = useState(false)
   const [showAppDownload, setShowAppDownload] = useState(false)
   const [showShare, setShowShare] = useState(false)
   const [showVipSuccess, setShowVipSuccess] = useState(false)
   const [showGift, setShowGift] = useState(false)
+  const [mobileExpanded, setMobileExpanded] = useState(false)
+  const touchStartY = useRef<number | null>(null)
 
-  const freeCount = series.freeEpisodes
-  const isUnlocked = canWatch(seriesId, currentEpisode, freeCount, isSubscribed)
+  function handleTouchStart(e: React.TouchEvent) {
+    if (mobileExpanded) return
+    touchStartY.current = e.touches[0].clientY
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (mobileExpanded || touchStartY.current === null) return
+    const delta = touchStartY.current - e.changedTouches[0].clientY
+    touchStartY.current = null
+    if (delta > 60 && currentEpisode < series.totalEpisodes) goNext()
+    if (delta < -60 && currentEpisode > 1) goPrev()
+  }
+
+
+  function fetchEpisode(n: number) {
+    const id: number | undefined = series.episodes[n - 1]?.id
+    if (id === undefined) return
+    const episodeId: number = id
+    async function load() {
+      try {
+        const data = await seriesService.getEpisodeById(episodeId)
+        if (data) setEpisodeData(data)
+      } catch {}
+    }
+    load()
+  }
+
+  useEffect(() => {
+    fetchEpisode(initialEpisode)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const episode = episodeData ?? series.episodes[currentEpisode - 1]
+  const isUnlocked =
+    isSubscribed || !episode.locked || unlockedEpisodeIds.includes(episode.id)
+  const [isPurchasing, setIsPurchasing] = useState(false)
+
+  async function handleBuyEpisode() {
+    if (isPurchasing) return
+    if (!isLoggedIn) {
+      setPaywallShowCoins(false)
+      setPaywallEpisode(currentEpisode)
+      return
+    }
+    setIsPurchasing(true)
+    try {
+      await seriesService.purchaseEpisode(episode.id)
+      markEpisodeUnlocked(episode.id)
+      setPaywallEpisode(null)
+      fetchEpisode(currentEpisode)
+      ;(async () => { try { await refreshUser() } catch {} })()
+    } catch {
+      setPaywallShowCoins(true)
+      setPaywallEpisode(currentEpisode)
+    } finally {
+      setIsPurchasing(false)
+    }
+  }
 
   useEffect(() => {
     if (!isUnlocked) {
@@ -57,25 +116,26 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
     }
   }, [seriesId, currentEpisode]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const episode = series.episodes[currentEpisode - 1]
-
-  const episodeBatches = Array.from(
-    { length: Math.ceil(series.totalEpisodes / EPISODES_PER_BATCH) },
-    (_, i) => ({
-      start: i * EPISODES_PER_BATCH + 1,
-      end: Math.min((i + 1) * EPISODES_PER_BATCH, series.totalEpisodes),
-      label: `${i * EPISODES_PER_BATCH} - ${Math.min((i + 1) * EPISODES_PER_BATCH - 1, series.totalEpisodes - 1)}`,
-    }),
-  )
+  const episodeBatches =
+    series.totalEpisodes > 30
+      ? Array.from({ length: Math.ceil(series.totalEpisodes / EPISODES_PER_BATCH) }, (_, i) => ({
+          start: i * EPISODES_PER_BATCH + 1,
+          end: Math.min((i + 1) * EPISODES_PER_BATCH, series.totalEpisodes),
+          label: `${i * EPISODES_PER_BATCH + 1}-${Math.min((i + 1) * EPISODES_PER_BATCH, series.totalEpisodes)}`,
+        }))
+      : [{ start: 1, end: series.totalEpisodes, label: `1-${series.totalEpisodes}` }]
 
   const SYNOPSIS_PREVIEW_LENGTH = 160
-  const synopsis = series.longDescription
+  const synopsis = episode.description ?? series.longDescription
   const synopsisHasMore = synopsis.length > SYNOPSIS_PREVIEW_LENGTH
 
   function navigateTo(n: number) {
+    setMobileExpanded(false)
     setCurrentEpisode(n)
     setActiveBatch(Math.floor((n - 1) / EPISODES_PER_BATCH))
-    window.history.pushState(null, '', `/watch/${seriesId}/${n}`)
+    setEpisodeData(null)
+    window.history.pushState(null, '', ROUTES.watch(series.id, series.title, n))
+    fetchEpisode(n)
   }
 
   function goPrev() {
@@ -88,13 +148,23 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
   if (!episode) return null
 
   return (
-    <div style={{ background: '#040405' }}>
-      <div style={{ height: 64 }} />
+    <>
+    {!mobileExpanded && (
+      // eslint-disable-next-line react/no-danger
+      <style suppressHydrationWarning>{`@media (max-width: 1023px) { .site-navbar { display: none !important; } }`}</style>
+    )}
+    <div
+      className={`${mobileExpanded ? 'mobile-expanded' : 'h-[100dvh] overflow-hidden'} lg:h-auto lg:overflow-visible`}
+      style={{ background: '#040405' }}
+    >
+      <div className={`${mobileExpanded ? 'block' : 'hidden'} lg:block`} style={{ height: 64 }} />
 
-      <div className="flex flex-col lg:h-[calc(100vh-64px)] lg:flex-row lg:overflow-hidden">
+      <div className={`flex flex-col ${mobileExpanded ? '' : 'h-full'} lg:h-[calc(100vh-64px)] lg:flex-row lg:overflow-hidden`}>
         <div
-          className="relative flex flex-1 items-center justify-center overflow-x-hidden lg:min-h-0"
+          className="relative flex min-h-0 flex-1 items-center justify-center overflow-x-hidden"
           style={{ background: '#06001a' }}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
           <div
             className="pointer-events-none absolute"
@@ -112,9 +182,10 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
             }}
           />
 
+          {/* Desktop back button */}
           <Link
-            href={`/series/${seriesId}`}
-            className="absolute top-5 left-5 z-20 flex h-10 w-10 items-center justify-center rounded-full text-white transition-colors"
+            href={ROUTES.series(series.id, series.title)}
+            className="absolute top-5 left-5 z-20 hidden h-10 w-10 items-center justify-center rounded-full text-white transition-colors lg:flex"
             style={{
               background: 'rgba(255,255,255,0.1)',
               backdropFilter: 'blur(8px)',
@@ -126,13 +197,70 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
             </svg>
           </Link>
 
+          {/* Mobile top bar — back button + episodes & info on same row */}
+          <div className="absolute inset-x-0 top-5 z-20 flex items-center px-5 lg:hidden">
+            <Link
+              href={ROUTES.series(series.id, series.title)}
+              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-white transition-colors"
+              style={{
+                background: 'rgba(255,255,255,0.1)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid rgba(255,255,255,0.12)',
+              }}
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+              </svg>
+            </Link>
+            {!mobileExpanded ? (
+              <>
+                <div className="flex flex-1 justify-center">
+                  <button
+                    onClick={() => setMobileExpanded(true)}
+                    className="flex h-10 items-center gap-2 rounded-full px-5 text-sm font-semibold text-white"
+                    style={{
+                      background: 'rgba(0,0,0,0.5)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255,255,255,0.15)',
+                    }}
+                  >
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
+                      <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z" />
+                    </svg>
+                    Episodes & Info
+                  </button>
+                </div>
+                <div className="h-10 w-10 flex-shrink-0" />
+              </>
+            ) : (
+              <>
+                <div className="flex-1" />
+                <button
+                  onClick={() => setMobileExpanded(false)}
+                  className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-white transition-colors"
+                  style={{
+                    background: 'rgba(255,255,255,0.1)',
+                    backdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                  }}
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+                    <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
+                  </svg>
+                </button>
+              </>
+            )}
+          </div>
+
           <div className="video-sizer relative" style={{ aspectRatio: '9/16' }}>
             {isUnlocked ? (
               <VideoPlayer
                 fill
                 src={episode.videoUrl}
                 title={episode.title}
-                episode={currentEpisode}
+                episode={episode.number}
+                episodeId={episode.id}
+                totalEpisodes={series.totalEpisodes}
                 ratio="9/16"
                 onEnded={goNext}
                 onPrev={goPrev}
@@ -149,7 +277,7 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
                 }}
               >
                 <video
-                  src={episode.videoUrl}
+                  src={episode.videoUrl ?? undefined}
                   muted
                   playsInline
                   className="absolute inset-0 h-full w-full object-cover"
@@ -192,17 +320,19 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
                   </p>
                   <div className="mt-1 flex w-full flex-col gap-3">
                     <button
-                      onClick={() => {
-                        setPaywallShowCoins(true)
-                        setPaywallEpisode(currentEpisode)
-                      }}
-                      className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-white transition-all hover:brightness-110 active:scale-95"
+                      onClick={handleBuyEpisode}
+                      disabled={isPurchasing}
+                      className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-white transition-all hover:brightness-110 active:scale-95 disabled:opacity-60"
                       style={{
                         background: 'linear-gradient(90deg, #2b009f 0%, #4500ff 100%)',
                         boxShadow: '0 4px 20px rgba(69,0,255,0.45)',
                       }}
                     >
-                      <CoinIcon /> {EPISODE_COST} Unlock Now
+                      {isPurchasing ? (
+                        'Unlocking…'
+                      ) : (
+                        <><CoinIcon /> {episode.priceCredits || EPISODE_COST} Unlock Now</>
+                      )}
                     </button>
                     <a
                       href={APP_DOWNLOAD_URL}
@@ -244,7 +374,7 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
         </div>
 
         <div
-          className="scrollbar-hide w-full lg:w-[520px] lg:flex-shrink-0 lg:overflow-y-auto"
+          className={`scrollbar-hide w-full ${mobileExpanded ? 'block' : 'hidden'} lg:flex lg:w-[520px] lg:flex-shrink-0 lg:overflow-y-auto`}
           style={{ background: '#040405', borderTop: '1px solid rgba(255,255,255,0.06)' }}
         >
           <div className="space-y-6 px-4 pt-6 pb-4 sm:px-6 sm:pb-12 lg:pt-8">
@@ -254,7 +384,7 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
               </Link>
               <span className="text-dim">/</span>
               <Link
-                href={`/series/${seriesId}`}
+                href={ROUTES.series(series.id, series.title)}
                 className="line-clamp-1 max-w-[140px] transition-colors hover:text-foreground"
               >
                 {series.title}
@@ -264,7 +394,7 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
             </nav>
 
             <h1 className="text-xl leading-snug font-bold">
-              Episode {currentEpisode} — {series.title}
+              Episode {episode.number} — {episode.title}
             </h1>
 
             <div className="space-y-2">
@@ -287,7 +417,7 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {(series.genres ?? [series.genre, ...series.tags]).map((t) => (
+              {(series.tags ?? []).map((t) => (
                 <span
                   key={t}
                   className="rounded-full px-3 py-1 text-xs"
@@ -305,8 +435,6 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
             <EpisodeStats
               series={series}
               seriesId={seriesId}
-              isLiked={isLiked}
-              onToggleLike={() => setIsLiked((v) => !v)}
               onShare={() => setShowShare(true)}
               onGift={() => setShowGift(true)}
             />
@@ -316,27 +444,33 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
               batchTabs={episodeBatches}
               activeBatch={activeBatch}
               currentEpisode={currentEpisode}
-              seriesId={seriesId}
-              freeEpisodes={freeCount}
+              seriesId={series.id}
+              seriesTitle={series.title}
               onBatchChange={setActiveBatch}
               onEpisodeSelect={navigateTo}
             />
+
+            {related.length > 0 && (
+              <div className="mt-6 lg:hidden">
+                <GenreRow genre="Recommendations" series={related} showMoreButton={false} />
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {related.length > 0 && (
-        <div className="px-4 pt-4 pb-10 sm:px-8 sm:py-10 md:px-12" style={{ background: 'var(--background)' }}>
+        <div className="hidden px-4 pt-4 pb-10 sm:px-8 sm:py-10 md:px-12 lg:block" style={{ background: 'var(--background)' }}>
           <GenreRow genre="Recommendations" series={related} showMoreButton={false} />
         </div>
       )}
 
       {showShare && <ShareModal series={series} onClose={() => setShowShare(false)} />}
-      {showGift && <GiftModal onClose={() => setShowGift(false)} />}
+      {showGift && <GiftModal seriesId={seriesId} onClose={() => setShowGift(false)} />}
       {showExclusiveOffer && <ExclusiveOfferModal onClose={() => setShowExclusiveOffer(false)} />}
       {showAppDownload && <AppDownloadModal onClose={() => setShowAppDownload(false)} />}
 
-      {paywallEpisode !== null && !canWatch(seriesId, paywallEpisode, series.freeEpisodes, isSubscribed) && (
+      {paywallEpisode !== null && !isUnlocked && (
         <PaywallModal
           seriesId={seriesId}
           episodeNumber={paywallEpisode}
@@ -347,7 +481,7 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
             if (!paywallShowCoins) setShowExclusiveOffer(true)
           }}
           onUnlocked={() => {
-            router.push(`/watch/${seriesId}/${paywallEpisode}`)
+            router.push(ROUTES.watch(series.id, series.title, paywallEpisode))
             setPaywallEpisode(null)
           }}
           onSubscribed={() => setShowVipSuccess(true)}
@@ -358,11 +492,12 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
         <VipSuccessModal
           onClose={() => {
             setShowVipSuccess(false)
-            router.push(`/watch/${seriesId}/${paywallEpisode ?? currentEpisode}`)
+            router.push(ROUTES.watch(series.id, series.title, paywallEpisode ?? currentEpisode))
             setPaywallEpisode(null)
           }}
         />
       )}
     </div>
+    </>
   )
 }

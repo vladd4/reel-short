@@ -1,4 +1,5 @@
-import type { Actor, GiftItem } from '@/data/gifts'
+import type { Actor } from '@/data/gifts'
+import type { GiftItem } from '@/services'
 
 type Props = {
   selectedActor: Actor

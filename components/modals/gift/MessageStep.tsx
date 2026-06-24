@@ -1,5 +1,6 @@
 import { type ChangeEvent, useRef } from 'react'
-import type { Actor, GiftItem } from '@/data/gifts'
+import type { Actor } from '@/data/gifts'
+import type { GiftItem } from '@/services'
 
 type Props = {
   selectedActor: Actor
@@ -61,7 +62,7 @@ export default function MessageStep({
           maxLength={200}
           rows={4}
           placeholder="Write something heartfelt..."
-          className="w-full resize-none rounded-xl px-4 py-3 text-sm outline-none placeholder:text-white/20"
+          className="w-full resize-none rounded-xl px-4 py-3 text-base outline-none placeholder:text-white/20"
           style={{
             background: 'rgba(255,255,255,0.05)',
             border: '1px solid rgba(255,255,255,0.1)',

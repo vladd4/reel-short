@@ -2,19 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { parseVTT, type Cue } from '@/lib/parseVTT'
-
-const SUBTITLE_SRCS: Record<string, string> = {
-  English:    '/subtitles/ep-1/en.vtt',
-  Spanish:    '/subtitles/ep-1/es.vtt',
-  French:     '/subtitles/ep-1/fr.vtt',
-  Portuguese: '/subtitles/ep-1/pt.vtt',
-  German:     '/subtitles/ep-1/de.vtt',
-  Ukrainian:  '/subtitles/ep-1/uk.vtt',
-}
+import { subtitlesService } from '@/services'
 
 export type SettingsView = null | 'speed' | 'quality'
 
-export function usePlayerState(src: string, onEnded?: () => void) {
+export function usePlayerState(src: string, onEnded?: () => void, episodeId?: number) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
@@ -40,7 +32,8 @@ export function usePlayerState(src: string, onEnded?: () => void) {
   const [settingsView, setSettingsView] = useState<SettingsView>(null)
   const [speed, setSpeed] = useState(1)
   const [quality, setQuality] = useState('Auto (540P)')
-  const [subtitle, setSubtitle] = useState('English')
+  const [availableLanguages, setAvailableLanguages] = useState<string[]>([])
+  const [subtitle, setSubtitle] = useState('Off')
   const [cues, setCues] = useState<Cue[]>([])
   const [currentCue, setCurrentCue] = useState<string | null>(null)
 
@@ -56,7 +49,7 @@ export function usePlayerState(src: string, onEnded?: () => void) {
     setIsControlsVisible(true)
     timerRef.current = setTimeout(() => {
       if (playingRef.current && !panelOpenRef.current) setIsControlsVisible(false)
-    }, 3000)
+    }, 1500)
   }
 
   useEffect(() => () => clearTimeout(timerRef.current), [])
@@ -100,18 +93,30 @@ export function usePlayerState(src: string, onEnded?: () => void) {
   }, [speed])
 
   useEffect(() => {
-    if (subtitle === 'Off') { setCues([]); setCurrentCue(null); return }
-    const src = SUBTITLE_SRCS[subtitle]
-    if (!src) return
+    if (!episodeId) return
+    const id: number = episodeId
+    setSubtitle('Off')
+    setAvailableLanguages([])
+    async function loadLanguages() {
+      try {
+        const langs = await subtitlesService.getLanguages(id)
+        setAvailableLanguages(langs)
+      } catch {}
+    }
+    loadLanguages()
+  }, [episodeId])
+
+  useEffect(() => {
+    if (subtitle === 'Off' || !episodeId) { setCues([]); setCurrentCue(null); return }
+    const id: number = episodeId
     async function loadCues() {
       try {
-        const res = await fetch(src)
-        const text = await res.text()
-        setCues(parseVTT(text))
+        const srt = await subtitlesService.getSrt(id, subtitle)
+        setCues(parseVTT(srt))
       } catch {}
     }
     loadCues()
-  }, [subtitle])
+  }, [subtitle, episodeId])
 
   useEffect(() => {
     if (!cues.length) { setCurrentCue(null); return }
@@ -235,6 +240,7 @@ export function usePlayerState(src: string, onEnded?: () => void) {
     settingsView,
     speed,
     quality,
+    availableLanguages,
     subtitle,
     resetControlsTimer,
     togglePlay,

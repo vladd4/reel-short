@@ -1,8 +1,6 @@
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
-import { GENRES } from '@/constants'
 import { seriesService } from '@/services'
-import { CATEGORIES } from '@/data/series'
 import CategoryTabs from '@/components/series/CategoryTabs'
 import FavoritesRow from '@/components/series/FavoritesRow'
 import FeaturedBanner from '@/components/series/FeaturedBanner'
@@ -29,13 +27,25 @@ type Props = {
 
 export default async function Home({ searchParams }: Props) {
   const { genre } = await searchParams
-  const isShowingAll = !genre || genre === 'All'
+  const isShowingAll = !genre || genre.toLowerCase() === 'all'
 
-  const [featuredSeries, filteredSeries, allSeries] = await Promise.all([
-    seriesService.getFeatured(),
-    seriesService.getAll(isShowingAll ? undefined : genre),
-    seriesService.getAll(),
-  ])
+  let allSeries: Awaited<ReturnType<typeof seriesService.getAll>> = []
+  let genres: string[] = []
+  try {
+    ;[allSeries, genres] = await Promise.all([seriesService.getAll(), seriesService.getGenres()])
+  } catch {}
+
+  const featuredSeries = allSeries.slice(0, 5)
+  const filteredSeries = isShowingAll
+    ? allSeries
+    : allSeries.filter(
+        (s) =>
+          s.genres?.some((g) => g.toLowerCase() === genre?.toLowerCase()) ||
+          s.genre.toLowerCase() === genre?.toLowerCase(),
+      )
+
+  const visibleGenres = genres.slice(0, 7)
+  const categories = ['All', ...visibleGenres]
 
   return (
     <main className="min-h-screen pb-16">
@@ -43,16 +53,18 @@ export default async function Home({ searchParams }: Props) {
 
       <div className="mt-8 space-y-8 px-5 md:px-8">
         <FavoritesRow allSeries={allSeries} />
+
         <Suspense>
-          <CategoryTabs categories={CATEGORIES} />
+          <CategoryTabs categories={categories} />
         </Suspense>
 
         {isShowingAll ? (
-          await Promise.all(
-            GENRES.map(async (g, i) => (
-              <GenreRow key={g} genre={g} series={await seriesService.getAll(g)} />
-            )),
-          )
+          visibleGenres.map((g) => {
+            const genreSeries = allSeries.filter(
+              (s) => (s.genres?.[0] ?? s.genre) === g,
+            )
+            return <GenreRow key={g} genre={g} series={genreSeries} />
+          })
         ) : (
           <>
             <GenreRow genre={genre ?? 'Results'} series={filteredSeries} showMoreButton={false} />
