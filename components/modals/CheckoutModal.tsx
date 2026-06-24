@@ -217,11 +217,12 @@ export default function CheckoutModal({ plan, packCode, planCode, onClose, onSub
                     setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))
                     setErrors((prev) => ({ ...prev, cvv: undefined }))
                   }}
-                  className="w-full rounded-xl px-4 py-3 pr-10 text-sm text-white transition-all outline-none"
+                  className="w-full rounded-xl px-4 py-3 pr-10 text-white transition-all outline-none"
                   style={{
                     background: 'rgba(255,255,255,0.05)',
                     border: `1px solid ${errors.cvv ? 'rgba(214,0,0,0.5)' : 'rgba(255,255,255,0.08)'}`,
                     caretColor: '#4500ff',
+                    fontSize: 16,
                   }}
                   onFocus={(e) => (e.target.style.borderColor = errors.cvv ? 'rgba(214,0,0,0.7)' : 'rgba(69,0,255,0.6)')}
                   onBlur={(e) => (e.target.style.borderColor = errors.cvv ? 'rgba(214,0,0,0.5)' : 'rgba(255,255,255,0.08)')}

@@ -7,30 +7,33 @@ type Props = {
   onClose: () => void
 }
 
-const POINT_ITEMS = [
+const PERKS = [
   {
     icon: (
-      <svg viewBox="0 0 24 24" fill="currentColor" className="h-7 w-7">
+      <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
         <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
       </svg>
     ),
-    label: 'Dedicated Support',
+    label: 'Priority Support',
+    desc: '24/7 dedicated help',
   },
   {
     icon: (
-      <svg viewBox="0 0 24 24" fill="currentColor" className="h-7 w-7">
-        <path d="M12 1l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 1z" />
-      </svg>
-    ),
-    label: 'VIP Perks',
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="currentColor" className="h-7 w-7">
+      <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
       </svg>
     ),
-    label: 'Unlimited Viewing',
+    label: 'Unlimited Access',
+    desc: 'Every episode, any time',
+  },
+  {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+        <path d="M12 1l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 1z" />
+      </svg>
+    ),
+    label: 'Exclusive Perks',
+    desc: 'Early drops & bonuses',
   },
 ]
 
@@ -39,88 +42,149 @@ export default function VipSuccessModal({ onClose }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center p-6"
-      style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(6px)' }}
+      className="fixed inset-0 z-[60] flex items-center justify-center p-5"
+      style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)' }}
       onClick={onClose}
     >
       <div
-        className="anim-scale-in relative w-full max-w-sm rounded-3xl px-6 pt-16 pb-8"
+        className="anim-scale-in relative w-full max-w-sm overflow-hidden rounded-3xl"
         style={{
-          background: 'linear-gradient(180deg, #2a1a00 0%, #1a1000 40%, #110d00 100%)',
-          border: '1px solid rgba(255,255,255,0.1)',
-          boxShadow: '0 32px 80px rgba(0,0,0,0.7)',
+          background: '#0c0a00',
+          border: '1px solid rgba(227,161,25,0.2)',
+          boxShadow: '0 0 0 1px rgba(227,161,25,0.08), 0 40px 100px rgba(0,0,0,0.8)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="pointer-events-none absolute -top-14 left-1/2 flex -translate-x-1/2 flex-col items-center select-none">
-          <div
-            className="flex h-28 w-28 items-center justify-center rounded-full"
-            style={{
-              background: 'radial-gradient(circle, rgba(227,161,25,0.25) 0%, transparent 70%)',
-              filter: 'drop-shadow(0 0 24px rgba(227,161,25,0.5))',
-            }}
-          >
-            <span style={{ fontSize: 72, lineHeight: 1 }}>👑</span>
-          </div>
-        </div>
+        <div
+          className="pointer-events-none absolute -top-20 left-1/2 h-56 w-56 -translate-x-1/2 rounded-full"
+          style={{
+            background: 'radial-gradient(circle, rgba(227,161,25,0.18) 0%, transparent 70%)',
+          }}
+        />
+        <div
+          className="pointer-events-none absolute -bottom-16 -left-16 h-48 w-48 rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(69,0,255,0.12) 0%, transparent 70%)' }}
+        />
 
         <CloseButton
           onClick={onClose}
-          className="absolute top-4 right-4 h-8 w-8 rounded-full"
-          style={{ color: 'rgba(255,255,255,0.4)' }}
+          className="absolute top-4 right-4 z-10 h-8 w-8 rounded-full"
+          style={{ color: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.06)' }}
         />
 
-        <h2 className="mb-1 text-center text-xl font-black text-white">Congratulations!</h2>
-        <p className="mb-5 text-center text-base font-semibold" style={{ color: '#e3a119' }}>
-          You&apos;re now a VIP!
-        </p>
-
-        <div className="mb-6 flex items-center gap-2">
-          <div className="h-px flex-1" style={{ background: 'rgba(255,255,255,0.08)' }} />
-          <svg
-            viewBox="0 0 12 16"
-            className="h-3.5 w-2.5 flex-shrink-0"
-            style={{ fill: '#e3a119' }}
+        <div className="relative flex flex-col items-center px-6 pt-10 pb-6">
+          <div
+            className="mb-4 flex h-20 w-20 items-center justify-center rounded-full"
+            style={{
+              background: 'radial-gradient(circle, rgba(227,161,25,0.15) 0%, transparent 70%)',
+              border: '1.5px solid rgba(227,161,25,0.25)',
+              boxShadow: '0 0 40px rgba(227,161,25,0.2)',
+            }}
           >
-            <path d="M6 0l2 5h4l-3.3 2.4L10 13 6 10 2 13l1.3-5.6L0 5h4z" />
-          </svg>
-          <div className="h-px flex-1" style={{ background: 'rgba(255,255,255,0.08)' }} />
+            <span
+              style={{
+                fontSize: 44,
+                lineHeight: 1,
+                filter: 'drop-shadow(0 0 12px rgba(227,161,25,0.6))',
+              }}
+            >
+              👑
+            </span>
+          </div>
+
+          <p
+            className="mb-1 text-[10px] font-bold tracking-[0.2em] uppercase"
+            style={{ color: 'rgba(227,161,25,0.7)' }}
+          >
+            Welcome to
+          </p>
+          <h2
+            className="mb-2 text-3xl font-black tracking-tight text-white"
+            style={{ letterSpacing: '-0.02em' }}
+          >
+            VIP Club
+          </h2>
+          <p
+            className="text-center text-sm leading-relaxed"
+            style={{ color: 'rgba(255,255,255,0.45)' }}
+          >
+            Your subscription is now active.
+            <br />
+            Enjoy unlimited access to everything.
+          </p>
         </div>
 
-        <div className="mb-7 grid grid-cols-3 gap-3">
-          {POINT_ITEMS.map(({ icon, label }) => (
-            <div key={label} className="flex flex-col items-center gap-2.5">
+        <div className="flex items-center gap-3 px-6">
+          <div
+            className="h-px flex-1"
+            style={{ background: 'linear-gradient(90deg, transparent, rgba(227,161,25,0.25))' }}
+          />
+          <svg
+            viewBox="0 0 20 20"
+            className="h-3 w-3 flex-shrink-0"
+            fill="#e3a119"
+            style={{ opacity: 0.6 }}
+          >
+            <path d="M10 0l2.4 7.3H20l-6.2 4.5 2.4 7.2L10 14.6l-6.2 4.4 2.4-7.2L0 7.3h7.6z" />
+          </svg>
+          <div
+            className="h-px flex-1"
+            style={{ background: 'linear-gradient(90deg, rgba(227,161,25,0.25), transparent)' }}
+          />
+        </div>
+
+        <div className="space-y-2.5 px-6 py-5">
+          {PERKS.map(({ icon, label, desc }) => (
+            <div
+              key={label}
+              className="flex items-center gap-4 rounded-2xl px-4 py-3.5"
+              style={{
+                background: 'rgba(227,161,25,0.05)',
+                border: '1px solid rgba(227,161,25,0.1)',
+              }}
+            >
               <div
-                className="flex h-16 w-16 items-center justify-center rounded-2xl"
+                className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl"
                 style={{
-                  background: 'rgba(227,161,25,0.1)',
-                  border: '1px solid rgba(227,161,25,0.2)',
+                  background: 'rgba(227,161,25,0.12)',
                   color: '#e3a119',
                 }}
               >
                 {icon}
               </div>
-              <span
-                className="text-center text-[11px] leading-tight font-semibold"
-                style={{ color: 'rgba(255,255,255,0.7)' }}
+              <div>
+                <p className="text-sm font-bold text-white">{label}</p>
+                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  {desc}
+                </p>
+              </div>
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="ml-auto h-4 w-4 flex-shrink-0"
+                style={{ color: 'rgba(227,161,25,0.5)' }}
               >
-                {label}
-              </span>
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+              </svg>
             </div>
           ))}
         </div>
 
-        <button
-          onClick={onClose}
-          className="w-full rounded-xl py-3.5 text-sm font-bold tracking-wide transition-all hover:brightness-110 active:scale-95"
-          style={{
-            background: 'linear-gradient(135deg, #e3a119 0%, #f5c842 50%, #e3a119 100%)',
-            color: '#1a1000',
-            boxShadow: '0 4px 20px rgba(227,161,25,0.4)',
-          }}
-        >
-          Start Watching
-        </button>
+        <div className="px-6 pb-7">
+          <button
+            onClick={onClose}
+            className="w-full rounded-xl py-4 text-sm font-black tracking-wide transition-all hover:brightness-110 active:scale-[0.98]"
+            style={{
+              background: 'linear-gradient(135deg, #c8870e 0%, #f5c842 45%, #d4950f 100%)',
+              color: '#0c0800',
+              boxShadow: '0 8px 32px rgba(227,161,25,0.35)',
+              letterSpacing: '0.04em',
+              cursor: 'pointer',
+            }}
+          >
+            START WATCHING
+          </button>
+        </div>
       </div>
     </div>
   )
