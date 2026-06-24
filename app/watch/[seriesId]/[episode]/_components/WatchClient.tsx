@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import type { Episode, Series } from '@/types'
@@ -49,20 +49,6 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
   const [showVipSuccess, setShowVipSuccess] = useState(false)
   const [showGift, setShowGift] = useState(false)
   const [mobileExpanded, setMobileExpanded] = useState(false)
-  const touchStartY = useRef<number | null>(null)
-
-  function handleTouchStart(e: React.TouchEvent) {
-    if (mobileExpanded) return
-    touchStartY.current = e.touches[0].clientY
-  }
-
-  function handleTouchEnd(e: React.TouchEvent) {
-    if (mobileExpanded || touchStartY.current === null) return
-    const delta = touchStartY.current - e.changedTouches[0].clientY
-    touchStartY.current = null
-    if (delta > 60 && currentEpisode < series.totalEpisodes) goNext()
-    if (delta < -60 && currentEpisode > 1) goPrev()
-  }
 
 
   function fetchEpisode(n: number) {
@@ -87,13 +73,7 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
     isSubscribed || !episode.locked || unlockedEpisodeIds.includes(episode.id)
   const [isPurchasing, setIsPurchasing] = useState(false)
 
-  async function handleBuyEpisode() {
-    if (isPurchasing) return
-    if (!isLoggedIn) {
-      setPaywallShowCoins(false)
-      setPaywallEpisode(currentEpisode)
-      return
-    }
+  async function purchaseEpisodeNow() {
     setIsPurchasing(true)
     try {
       await seriesService.purchaseEpisode(episode.id)
@@ -107,6 +87,25 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
     } finally {
       setIsPurchasing(false)
     }
+  }
+
+  async function handleBuyEpisode() {
+    if (isPurchasing) return
+    if (!isLoggedIn) {
+      setPaywallShowCoins(true)
+      setPaywallEpisode(currentEpisode)
+      return
+    }
+    const userCredits = user?.credits ?? 0
+    if (userCredits < episode.priceCredits) {
+      setPaywallShowCoins(true)
+      setPaywallEpisode(currentEpisode)
+      return
+    }
+    setIsPurchasing(true)
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+    setIsPurchasing(false)
+    await purchaseEpisodeNow()
   }
 
   useEffect(() => {
@@ -151,10 +150,10 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
     <>
     {!mobileExpanded && (
       // eslint-disable-next-line react/no-danger
-      <style suppressHydrationWarning>{`@media (max-width: 1023px) { .site-navbar { display: none !important; } }`}</style>
+      <style suppressHydrationWarning>{`@media (max-width: 1023px) { .site-navbar { display: none !important; } html, body { overflow: hidden !important; overscroll-behavior: none !important; position: fixed !important; width: 100% !important; height: 100% !important; } }`}</style>
     )}
     <div
-      className={`${mobileExpanded ? 'mobile-expanded' : 'h-[100dvh] overflow-hidden'} lg:h-auto lg:overflow-visible`}
+      className={`${mobileExpanded ? 'mobile-expanded' : 'fixed inset-0 overflow-hidden'} lg:static lg:inset-auto lg:h-auto lg:overflow-visible`}
       style={{ background: '#040405' }}
     >
       <div className={`${mobileExpanded ? 'block' : 'hidden'} lg:block`} style={{ height: 64 }} />
@@ -163,8 +162,6 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
         <div
           className="relative flex min-h-0 flex-1 items-center justify-center overflow-x-hidden"
           style={{ background: '#06001a' }}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
         >
           <div
             className="pointer-events-none absolute"
@@ -481,8 +478,8 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
             if (!paywallShowCoins) setShowExclusiveOffer(true)
           }}
           onUnlocked={() => {
-            router.push(ROUTES.watch(series.id, series.title, paywallEpisode))
             setPaywallEpisode(null)
+            ;(async () => { await purchaseEpisodeNow() })()
           }}
           onSubscribed={() => setShowVipSuccess(true)}
         />

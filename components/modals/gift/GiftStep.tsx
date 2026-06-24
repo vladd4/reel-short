@@ -46,6 +46,15 @@ export default function GiftStep({
                 <div className="h-3 w-10 animate-pulse rounded" style={{ background: 'rgba(255,255,255,0.08)' }} />
               </div>
             ))
+          : actors.length === 0
+          ? (
+              <div className="flex items-center gap-3 rounded-xl px-4 py-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                <span className="text-xl">🎭</span>
+                <p className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                  No actors available for this series
+                </p>
+              </div>
+            )
           : actors.map((actor) => (
               <button
                 key={actor.id}
@@ -149,16 +158,16 @@ export default function GiftStep({
       </div>
 
       <button
-        onClick={() => selectedGift && onContinue()}
-        disabled={!selectedGift}
+        onClick={() => selectedGift && actors.length > 0 && onContinue()}
+        disabled={!selectedGift || actors.length === 0}
         className="mt-5 w-full rounded-xl py-3.5 text-sm font-bold transition-all"
         style={{
-          background: selectedGift
+          background: selectedGift && actors.length > 0
             ? 'linear-gradient(90deg, #2b009f 0%, #4500ff 100%)'
             : 'rgba(255,255,255,0.07)',
-          color: selectedGift ? '#fff' : 'rgba(255,255,255,0.25)',
-          cursor: selectedGift ? 'pointer' : 'default',
-          boxShadow: selectedGift ? '0 4px 20px rgba(69,0,255,0.4)' : 'none',
+          color: selectedGift && actors.length > 0 ? '#fff' : 'rgba(255,255,255,0.25)',
+          cursor: selectedGift && actors.length > 0 ? 'pointer' : 'default',
+          boxShadow: selectedGift && actors.length > 0 ? '0 4px 20px rgba(69,0,255,0.4)' : 'none',
         }}
       >
         Continue

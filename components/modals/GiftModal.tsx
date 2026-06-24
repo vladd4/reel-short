@@ -161,7 +161,7 @@ export default function GiftModal({ onClose, seriesId }: { onClose: () => void; 
           </div>
         )}
 
-        {step === 'choose' && (loading || selectedActor) && (
+        {step === 'choose' && (
           <GiftStep
             loading={loading}
             gifts={gifts}
