@@ -8,6 +8,7 @@ type Props = {
   series: Series
   episode: Episode
   isPurchasing: boolean
+  hideUnlock?: boolean
   onUnlock: () => void
   onAppDownload: () => void
 }
@@ -15,6 +16,7 @@ type Props = {
 export default function LockedEpisodeOverlay({
   episode,
   isPurchasing,
+  hideUnlock = false,
   onUnlock,
   onAppDownload,
 }: Props) {
@@ -69,23 +71,25 @@ export default function LockedEpisodeOverlay({
           Please unlock to watch.
         </p>
         <div className="mt-1 flex w-full flex-col gap-3">
-          <button
-            onClick={onUnlock}
-            disabled={isPurchasing}
-            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-white transition-all hover:brightness-110 active:scale-95 disabled:opacity-60"
-            style={{
-              background: 'linear-gradient(90deg, #2b009f 0%, #4500ff 100%)',
-              boxShadow: '0 4px 20px rgba(69,0,255,0.45)',
-            }}
-          >
-            {isPurchasing ? (
-              'Unlocking…'
-            ) : (
-              <>
-                <CoinIcon /> {episode.priceCredits || EPISODE_COST} Unlock Now
-              </>
-            )}
-          </button>
+          {!hideUnlock && (
+            <button
+              onClick={onUnlock}
+              disabled={isPurchasing}
+              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-white transition-all hover:brightness-110 active:scale-95 disabled:opacity-60"
+              style={{
+                background: 'linear-gradient(90deg, #2b009f 0%, #4500ff 100%)',
+                boxShadow: '0 4px 20px rgba(69,0,255,0.45)',
+              }}
+            >
+              {isPurchasing ? (
+                'Unlocking…'
+              ) : (
+                <>
+                  <CoinIcon /> {episode.priceCredits || EPISODE_COST} Unlock Now
+                </>
+              )}
+            </button>
+          )}
           <a
             href={APP_DOWNLOAD_URL}
             target="_blank"

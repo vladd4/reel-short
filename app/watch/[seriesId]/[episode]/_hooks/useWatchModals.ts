@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import type { ApiUser, Episode } from '@/types'
 import { seriesService } from '@/services'
 
+const EPISODE_PURCHASED_KEY = 'episode-purchased'
+
 type Params = {
   isLoggedIn: boolean
   user: ApiUser | null
@@ -35,9 +37,12 @@ export function useWatchModals({
   const [showVipSuccess, setShowVipSuccess] = useState(false)
   const [showGift, setShowGift] = useState(false)
   const [isPurchasing, setIsPurchasing] = useState(false)
+  const [hasPurchased, setHasPurchased] = useState(
+    () => !!localStorage.getItem(EPISODE_PURCHASED_KEY),
+  )
 
   useEffect(() => {
-    if (!isUnlocked) {
+    if (!isUnlocked && !hasPurchased) {
       setPaywallShowCoins(false)
       setPaywallEpisode(currentEpisode)
     }
@@ -48,6 +53,8 @@ export function useWatchModals({
     try {
       await seriesService.purchaseEpisode(episode.id)
       markEpisodeUnlocked(episode.id)
+      localStorage.setItem(EPISODE_PURCHASED_KEY, '1')
+      setHasPurchased(true)
       setPaywallEpisode(null)
       fetchEpisode(currentEpisode)
       void refreshUser()
@@ -82,6 +89,7 @@ export function useWatchModals({
     paywallEpisode,
     setPaywallEpisode,
     paywallShowCoins,
+    hasPurchased,
     showExclusiveOffer,
     setShowExclusiveOffer,
     showAppDownload,

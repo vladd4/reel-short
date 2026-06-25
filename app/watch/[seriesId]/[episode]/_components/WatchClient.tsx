@@ -67,6 +67,7 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
     showGift,
     setShowGift,
     isPurchasing,
+    hasPurchased,
     purchaseEpisodeNow,
     handleBuyEpisode,
   } = useWatchModals({
@@ -210,6 +211,7 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
                   series={series}
                   episode={episode}
                   isPurchasing={isPurchasing}
+                  hideUnlock={hasPurchased}
                   onUnlock={handleBuyEpisode}
                   onAppDownload={() => setShowAppDownload(true)}
                 />
