@@ -94,7 +94,7 @@ export default function FeaturedBanner({ items }: Props) {
 
       <div
         key={s.id + '-content'}
-        className="anim-fade-up absolute inset-0 flex flex-col justify-end pl-16 pr-6 pb-10 md:px-20 md:pb-14"
+        className="anim-fade-up absolute inset-0 flex flex-col justify-end px-6 pb-10 md:px-20 md:pb-14"
       >
         <div className="max-w-2xl">
           <div className="mb-4 flex items-center gap-2">
@@ -168,7 +168,7 @@ export default function FeaturedBanner({ items }: Props) {
       {/* Left arrow */}
       <button
         onClick={() => setIdx((i) => (i - 1 + items.length) % items.length)}
-        className="absolute top-1/2 left-4 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition-all hover:brightness-125 active:scale-90"
+        className="absolute top-1/2 left-4 hidden h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition-all hover:brightness-125 active:scale-90 md:flex"
         style={{
           background: 'rgba(0,0,0,0.45)',
           border: '1px solid rgba(255,255,255,0.18)',
@@ -184,7 +184,7 @@ export default function FeaturedBanner({ items }: Props) {
       {/* Right arrow */}
       <button
         onClick={() => setIdx((i) => (i + 1) % items.length)}
-        className="absolute top-1/2 right-4 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition-all hover:brightness-125 active:scale-90"
+        className="absolute top-1/2 right-4 hidden h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition-all hover:brightness-125 active:scale-90 md:flex"
         style={{
           background: 'rgba(0,0,0,0.45)',
           border: '1px solid rgba(255,255,255,0.18)',

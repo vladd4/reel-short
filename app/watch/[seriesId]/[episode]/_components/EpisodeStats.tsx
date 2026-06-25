@@ -47,6 +47,7 @@ export default function EpisodeStats({
   }, [seriesId])
 
   function toggleLike() {
+    if (!isLoggedIn) { setShowSignIn(true); return }
     const ids = getLikedIds()
     const isNowLiked = !liked
     if (isNowLiked) {
