@@ -17,6 +17,7 @@ import ShareModal from '@/components/series/ShareModal'
 import VideoPlayer from '@/components/series/VideoPlayer'
 import { useEpisodePlayer } from '../_hooks/useEpisodePlayer'
 import { useWatchModals } from '../_hooks/useWatchModals'
+import AppDownloadPage from './AppDownloadPage'
 import LockedEpisodeOverlay from './LockedEpisodeOverlay'
 import WatchSidebar from './WatchSidebar'
 
@@ -243,6 +244,10 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
           >
             <GenreRow genre="Recommendations" series={related} showMoreButton={false} />
           </div>
+        )}
+
+        {hasPurchased && !isUnlocked && (
+          <AppDownloadPage series={series} episode={episode} onBack={goPrev} />
         )}
 
         {showShare && <ShareModal series={series} onClose={() => setShowShare(false)} />}
