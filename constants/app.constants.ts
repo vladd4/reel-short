@@ -1,4 +1,4 @@
-export const SITE_URL = 'https://my-drama.com'
+export const SITE_URL = 'https://my-drama-clone.vercel.app'
 export const SUPPORT_EMAIL = 'support@my-drama.com'
 export const SUPPORT_PHONE = '+1 762 775 7797'
 export const SUPPORT_PHONE_HREF = 'tel:+17627757797'

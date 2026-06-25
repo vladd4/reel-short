@@ -67,7 +67,7 @@ export default function SettingsPanel({
 
           <button
             onClick={() => onViewChange('speed')}
-            className="flex w-full items-center justify-between px-4 py-3 text-sm transition-colors hover:bg-white/[0.07]"
+            className="flex w-full cursor-pointer items-center justify-between px-4 py-3 text-sm transition-colors hover:bg-white/[0.07]"
           >
             <div className="flex items-center gap-2.5">
               <svg
@@ -97,7 +97,7 @@ export default function SettingsPanel({
 
           <button
             onClick={() => onViewChange('quality')}
-            className="flex w-full items-center justify-between px-4 py-3 text-sm transition-colors hover:bg-white/[0.07]"
+            className="flex w-full cursor-pointer items-center justify-between px-4 py-3 text-sm transition-colors hover:bg-white/[0.07]"
           >
             <div className="flex items-center gap-2.5">
               <svg
@@ -134,7 +134,7 @@ export default function SettingsPanel({
         <>
           <button
             onClick={() => onViewChange(null)}
-            className="flex w-full items-center gap-2 px-4 py-3 text-sm transition-colors hover:bg-white/[0.07]"
+            className="flex w-full cursor-pointer items-center gap-2 px-4 py-3 text-sm transition-colors hover:bg-white/[0.07]"
             style={{
               borderBottom: '1px solid rgba(255,255,255,0.07)',
               color: 'rgba(255,255,255,0.65)',
@@ -150,7 +150,7 @@ export default function SettingsPanel({
                 onViewChange(null)
                 onClose()
               }}
-              className="flex w-full items-center justify-between px-4 py-2.5 text-sm transition-colors hover:bg-white/[0.07]"
+              className="flex w-full cursor-pointer items-center justify-between px-4 py-2.5 text-sm transition-colors hover:bg-white/[0.07]"
               style={{ color: speed === s ? '#fff' : 'rgba(255,255,255,0.55)' }}
             >
               {s === 1 ? 'Normal (1×)' : `${s}×`}
@@ -164,7 +164,7 @@ export default function SettingsPanel({
         <>
           <button
             onClick={() => onViewChange(null)}
-            className="flex w-full items-center gap-2 px-4 py-3 text-sm transition-colors hover:bg-white/[0.07]"
+            className="flex w-full cursor-pointer items-center gap-2 px-4 py-3 text-sm transition-colors hover:bg-white/[0.07]"
             style={{
               borderBottom: '1px solid rgba(255,255,255,0.07)',
               color: 'rgba(255,255,255,0.65)',
@@ -180,7 +180,7 @@ export default function SettingsPanel({
                 onViewChange(null)
                 onClose()
               }}
-              className="flex w-full items-center justify-between px-4 py-2.5 text-sm transition-colors hover:bg-white/[0.07]"
+              className="flex w-full cursor-pointer items-center justify-between px-4 py-2.5 text-sm transition-colors hover:bg-white/[0.07]"
               style={{ color: quality === q ? '#fff' : 'rgba(255,255,255,0.55)' }}
             >
               {q}

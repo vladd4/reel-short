@@ -5,6 +5,7 @@ import { useAuth } from '@/lib/auth'
 
 export default function MyMuseBanner() {
   const { isLoggedIn, user } = useAuth()
+
   const isSubscribed = user?.isSubscribed ?? false
   const hasCoins = (user?.credits ?? 0) > 0
 
@@ -21,7 +22,6 @@ export default function MyMuseBanner() {
         boxShadow: '0 8px 40px rgba(0,0,0,0.4)',
       }}
     >
-      {/* Pink glow blob */}
       <div
         className="pointer-events-none absolute -top-12 -left-12 h-48 w-48 rounded-full opacity-50"
         style={{ background: 'radial-gradient(circle, rgba(255,47,99,0.25) 0%, transparent 70%)' }}

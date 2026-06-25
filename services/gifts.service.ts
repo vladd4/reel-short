@@ -1,25 +1,7 @@
 import type { ApiGift } from '@/types'
+import type { GiftItem } from '@/types'
+import { mapGift } from '@/lib/gifts.mappers'
 import { HttpClient } from './http.client'
-
-export type GiftItem = {
-  id: string
-  code: string
-  name: string
-  emoji: string
-  cost: number
-  tier: string
-}
-
-function mapGift(g: ApiGift): GiftItem {
-  return {
-    id: String(g.id),
-    code: g.code,
-    name: g.name,
-    emoji: g.emoji,
-    cost: g.priceCredits,
-    tier: g.category.toLowerCase(),
-  }
-}
 
 class GiftsService extends HttpClient {
   async getAll(): Promise<GiftItem[]> {

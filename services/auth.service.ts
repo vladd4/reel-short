@@ -1,11 +1,5 @@
-import type { ApiUser } from '@/types'
+import type { ApiUser, AuthResponse } from '@/types'
 import { HttpClient } from './http.client'
-
-export type AuthResponse = {
-  user: ApiUser
-  token: string
-  expiresAt: string
-}
 
 class AuthService extends HttpClient {
   async register(email: string, password: string): Promise<AuthResponse> {

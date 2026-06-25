@@ -6,7 +6,6 @@ import { ROUTES } from '@/constants'
 import { useAuth } from '@/lib/auth'
 import { useStore } from '@/lib/store'
 
-
 type BatchTab = {
   start: number
   end: number
@@ -48,21 +47,21 @@ export default function EpisodeSelector({
         style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
       >
         {batchTabs.map((tab, i) => (
-            <button
-              key={i}
-              onClick={() => onBatchChange(i)}
-              className="relative px-4 py-2.5 text-sm font-medium transition-colors"
-              style={{ color: activeBatch === i ? '#fff' : 'rgba(255,255,255,0.4)' }}
-            >
-              {tab.label}
-              {activeBatch === i && (
-                <span
-                  className="absolute right-0 bottom-0 left-0 h-0.5 rounded-full"
-                  style={{ background: '#4500ff' }}
-                />
-              )}
-            </button>
-          ))}
+          <button
+            key={i}
+            onClick={() => onBatchChange(i)}
+            className="relative px-4 py-2.5 text-sm font-medium transition-colors"
+            style={{ color: activeBatch === i ? '#fff' : 'rgba(255,255,255,0.4)' }}
+          >
+            {tab.label}
+            {activeBatch === i && (
+              <span
+                className="absolute right-0 bottom-0 left-0 h-0.5 rounded-full"
+                style={{ background: '#4500ff' }}
+              />
+            )}
+          </button>
+        ))}
         <Link
           href={ROUTES.series(seriesId, seriesTitle)}
           className="ml-auto flex items-center gap-1 pb-2.5 text-xs transition-colors hover:text-foreground"
@@ -77,7 +76,8 @@ export default function EpisodeSelector({
 
       <div className="episode-grid grid grid-cols-6 gap-1.5 sm:grid-cols-10 lg:grid-cols-6">
         {visibleEpisodes.map((episode) => {
-          const isLocked = episode.locked && !isSubscribed && !unlockedEpisodeIds.includes(episode.id)
+          const isLocked =
+            episode.locked && !isSubscribed && !unlockedEpisodeIds.includes(episode.id)
           const isCurrent = episode.number === currentEpisode
           return (
             <button

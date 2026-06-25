@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
-import { seriesService } from '@/services'
 import { parseId } from '@/lib/utils'
+import { seriesService } from '@/services'
 
 type Props = {
   params: Promise<{

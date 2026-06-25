@@ -6,7 +6,9 @@ import Link from 'next/link'
 import type { Series } from '@/types'
 import { FEATURED_INTERVAL_MS, ROUTES } from '@/constants'
 
-type Props = { items: Series[] }
+type Props = {
+  items: Series[]
+}
 
 export default function FeaturedBanner({ items }: Props) {
   const [idx, setIdx] = useState(0)

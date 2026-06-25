@@ -143,7 +143,7 @@ export default function PlayerControls({
       <div className="flex items-center gap-0.5 px-3 pb-4">
         <button
           onClick={onTogglePlay}
-          className="rounded-lg p-2 text-white transition-colors hover:bg-white/10"
+          className="cursor-pointer rounded-lg p-2 text-white transition-colors hover:bg-white/10"
         >
           {playing ? (
             <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
@@ -208,7 +208,7 @@ export default function PlayerControls({
             <button
               onClick={onOpenSubtitles}
               title="Subtitles"
-              className="rounded-lg p-2 transition-colors hover:bg-white/10"
+              className="cursor-pointer rounded-lg p-2 transition-colors hover:bg-white/10"
               style={{
                 color: isSubtitlesOpen || subtitle !== 'Off' ? '#fff' : 'rgba(255,255,255,0.5)',
               }}
@@ -232,7 +232,7 @@ export default function PlayerControls({
           <button
             onClick={onOpenSettings}
             title="Settings"
-            className="rounded-lg p-2 transition-colors hover:bg-white/10"
+            className="cursor-pointer rounded-lg p-2 transition-colors hover:bg-white/10"
             style={{ color: isSettingsOpen ? '#fff' : 'rgba(255,255,255,0.5)' }}
           >
             <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
@@ -255,7 +255,7 @@ export default function PlayerControls({
         <button
           onClick={onToggleFullscreen}
           title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-          className="hidden rounded-lg p-2 transition-colors hover:bg-white/10 lg:block"
+          className="hidden cursor-pointer rounded-lg p-2 transition-colors hover:bg-white/10 lg:block"
           style={{ color: 'rgba(255,255,255,0.5)' }}
         >
           {isFullscreen ? (

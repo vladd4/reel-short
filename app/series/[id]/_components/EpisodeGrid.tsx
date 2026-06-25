@@ -27,6 +27,7 @@ const LockIcon = () => (
 export default function EpisodeGrid({ episodes, seriesId, seriesTitle, totalCount }: Props) {
   const { user } = useAuth()
   const { unlockedEpisodeIds } = useStore()
+
   const isSubscribed = user?.isSubscribed ?? false
 
   return (
@@ -39,7 +40,8 @@ export default function EpisodeGrid({ episodes, seriesId, seriesTitle, totalCoun
       </div>
       <div className="grid grid-cols-6 gap-1.5 sm:grid-cols-[repeat(auto-fill,minmax(80px,1fr))] sm:gap-1.5">
         {episodes.map((episode) => {
-          const isLocked = episode.locked && !isSubscribed && !unlockedEpisodeIds.includes(episode.id)
+          const isLocked =
+            episode.locked && !isSubscribed && !unlockedEpisodeIds.includes(episode.id)
           return (
             <Link
               key={episode.number}

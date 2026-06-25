@@ -50,7 +50,7 @@ export default function SubtitlesPanel({
             onSubtitleChange(s)
             onClose()
           }}
-          className="flex w-full items-center justify-between px-4 py-2.5 text-sm transition-colors hover:bg-white/[0.07]"
+          className="flex w-full cursor-pointer items-center justify-between px-4 py-2.5 text-sm transition-colors hover:bg-white/[0.07]"
           style={{ color: subtitle === s ? '#fff' : 'rgba(255,255,255,0.55)' }}
         >
           {s === 'Off' ? 'Off' : languageName(s)}

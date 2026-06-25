@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Bebas_Neue, Geist, Geist_Mono } from 'next/font/google'
+import { SITE_URL } from '@/constants'
 import { AuthProvider } from '@/lib/auth'
 import { StoreProvider } from '@/lib/store'
 import Navbar from '@/components/layout/Navbar'
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
     'watch free',
     'episodes',
   ],
-  metadataBase: new URL('https://my-drama.com'),
+  metadataBase: new URL(SITE_URL),
   openGraph: {
     type: 'website',
     siteName: 'My Drama',

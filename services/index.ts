@@ -1,6 +1,6 @@
 export { seriesService } from './series.service'
 export { giftsService } from './gifts.service'
-export type { GiftItem } from './gifts.service'
+export type { GiftItem } from '@/types'
 export { authService } from './auth.service'
 export { paymentService } from './payment.service'
 export { billingService } from './billing.service'

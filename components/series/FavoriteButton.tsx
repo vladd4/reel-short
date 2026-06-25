@@ -16,6 +16,7 @@ type Props = {
 
 export default function FavoriteButton({ seriesId, withLabel, vertical, className, style }: Props) {
   const { isLoggedIn } = useAuth()
+
   const { isFavorite, toggleFavorite } = useStore()
   const [localFav, setLocalFav] = useState<boolean | null>(null)
   const [showSignIn, setShowSignIn] = useState(false)
@@ -48,7 +49,11 @@ export default function FavoriteButton({ seriesId, withLabel, vertical, classNam
         >
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
         </svg>
-        {withLabel && <span className={vertical ? 'text-xs font-medium' : 'text-sm font-medium'}>{isFavorited ? 'Saved' : 'Save'}</span>}
+        {withLabel && (
+          <span className={vertical ? 'text-xs font-medium' : 'text-sm font-medium'}>
+            {isFavorited ? 'Saved' : 'Save'}
+          </span>
+        )}
       </button>
       {showSignIn && (
         <SignInModal onClose={() => setShowSignIn(false)} onContinue={() => setShowSignIn(false)} />

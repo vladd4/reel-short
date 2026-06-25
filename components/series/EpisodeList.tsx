@@ -17,11 +17,13 @@ type Props = {
 export default function EpisodeList({ series, currentEpisode }: Props) {
   const router = useRouter()
   const { user, refreshUser } = useAuth()
+
   const { unlockedEpisodeIds, markEpisodeUnlocked } = useStore()
-  const isSubscribed = user?.isSubscribed ?? false
-  const isLoggedIn = !!user
   const [paywallEp, setPaywallEp] = useState<number | null>(null)
   const [purchasingEpId, setPurchasingEpId] = useState<number | null>(null)
+
+  const isSubscribed = user?.isSubscribed ?? false
+  const isLoggedIn = !!user
 
   async function handleEpClick(ep: Episode) {
     const unlocked = isSubscribed || !ep.locked || unlockedEpisodeIds.includes(ep.id)
@@ -37,7 +39,7 @@ export default function EpisodeList({ series, currentEpisode }: Props) {
     try {
       await seriesService.purchaseEpisode(ep.id)
       markEpisodeUnlocked(ep.id)
-      ;(async () => { try { await refreshUser() } catch {} })()
+      void refreshUser()
       router.push(ROUTES.watch(series.id, series.title, ep.number))
     } catch {
       setPaywallEp(ep.number)
@@ -112,7 +114,9 @@ export default function EpisodeList({ series, currentEpisode }: Props) {
 
               <div className="flex-shrink-0">
                 {isBuying ? (
-                  <span className="text-[9px]" style={{ color: 'rgba(255,255,255,0.4)' }}>…</span>
+                  <span className="text-[9px]" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                    …
+                  </span>
                 ) : !unlocked ? (
                   <span className="text-[9px] text-gold">◈ {ep.priceCredits || 5}</span>
                 ) : !ep.free ? (

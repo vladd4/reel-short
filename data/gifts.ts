@@ -1,20 +1,6 @@
-export type Actor = {
-  id: string
-  initials: string
-  name: string
-  fullName: string
-  avatarBg: string
-}
-export type GiftCategory = {
-  id: string
-  label: string
-  icon: string | null
-}
-export type TierStyle = {
-  bg: string
-  badge?: string
-  badgeColor: string
-}
+import type { Actor, GiftCategory, TierStyle } from '@/types/gift.types'
+
+export type { Actor } from '@/types/gift.types'
 
 export const GIFT_ACTORS: Actor[] = [
   { id: 'sb', initials: 'SB', name: 'Sailor', fullName: 'Sailor Bell', avatarBg: '#7a5c3a' },

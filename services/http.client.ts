@@ -101,7 +101,12 @@ async function tryRefresh(): Promise<boolean> {
 export class HttpClient {
   protected baseUrl = process.env.NEXT_PUBLIC_API_URL ?? ''
 
-  private async request<T>(path: string, init: RequestInit = {}, isRetry = false, asText = false): Promise<T> {
+  private async request<T>(
+    path: string,
+    init: RequestInit = {},
+    isRetry = false,
+    asText = false,
+  ): Promise<T> {
     const url = `${this.baseUrl}${path}`
 
     let token = _accessToken
@@ -122,18 +127,28 @@ export class HttpClient {
 
     if (res.status === 401 && !isRetry) {
       if (!_refreshPromise) {
-        _refreshPromise = tryRefresh().finally(() => { _refreshPromise = null })
+        _refreshPromise = tryRefresh().finally(() => {
+          _refreshPromise = null
+        })
       }
       const refreshed = await _refreshPromise
       if (refreshed) return this.request<T>(path, init, true, asText)
       let text: string
-      try { text = await res.text() } catch { text = res.statusText }
+      try {
+        text = await res.text()
+      } catch {
+        text = res.statusText
+      }
       throw new ApiError(401, text)
     }
 
     if (!res.ok) {
       let text: string
-      try { text = await res.text() } catch { text = res.statusText }
+      try {
+        text = await res.text()
+      } catch {
+        text = res.statusText
+      }
       throw new ApiError(res.status, text)
     }
 

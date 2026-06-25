@@ -1,10 +1,15 @@
 import { notFound, redirect } from 'next/navigation'
-import { seriesService } from '@/services'
 import { ROUTES } from '@/constants'
 import { parseId } from '@/lib/utils'
+import { seriesService } from '@/services'
 import WatchClient from './_components/WatchClient'
 
-type Props = { params: Promise<{ seriesId: string; episode: string }> }
+type Props = {
+  params: Promise<{
+    seriesId: string
+    episode: string
+  }>
+}
 
 export default async function WatchPage({ params }: Props) {
   const { seriesId: seriesSlug, episode } = await params

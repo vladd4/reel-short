@@ -86,7 +86,10 @@ export function useAccountSettings(refreshUser: () => Promise<void>) {
     e.preventDefault()
     setPwApiError('')
     setPwSuccess(false)
-    const result = changePasswordSchema.safeParse({ currentPassword: currentPw, newPassword: newPw })
+    const result = changePasswordSchema.safeParse({
+      currentPassword: currentPw,
+      newPassword: newPw,
+    })
     if (!result.success) {
       setPwErrors(collectErrors(result.error.issues))
       return

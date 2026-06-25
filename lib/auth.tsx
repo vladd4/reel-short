@@ -1,13 +1,13 @@
 'use client'
 
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
+import { type ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react'
 import type { ApiUser } from '@/types'
 import { authService } from '@/services/auth.service'
 import {
-  setAccessToken,
-  getRefreshToken,
   clearTokens,
+  getRefreshToken,
   loadStoredToken,
+  setAccessToken,
 } from '@/services/http.client'
 
 type AuthStore = {
@@ -83,7 +83,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn: !!user, isLoading, login, register, logout, refreshUser }}>
+    <AuthContext.Provider
+      value={{ user, isLoggedIn: !!user, isLoading, login, register, logout, refreshUser }}
+    >
       {children}
     </AuthContext.Provider>
   )

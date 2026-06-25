@@ -68,10 +68,19 @@ export default function SubscriptionCard({
 
       {subscriptionLoading ? (
         <div className="flex items-center gap-3 py-1">
-          <div className="h-9 w-9 animate-pulse rounded-full" style={{ background: 'rgba(255,255,255,0.06)' }} />
+          <div
+            className="h-9 w-9 animate-pulse rounded-full"
+            style={{ background: 'rgba(255,255,255,0.06)' }}
+          />
           <div className="space-y-2">
-            <div className="h-3 w-32 animate-pulse rounded" style={{ background: 'rgba(255,255,255,0.06)' }} />
-            <div className="h-2.5 w-24 animate-pulse rounded" style={{ background: 'rgba(255,255,255,0.04)' }} />
+            <div
+              className="h-3 w-32 animate-pulse rounded"
+              style={{ background: 'rgba(255,255,255,0.06)' }}
+            />
+            <div
+              className="h-2.5 w-24 animate-pulse rounded"
+              style={{ background: 'rgba(255,255,255,0.04)' }}
+            />
           </div>
         </div>
       ) : hasPeriod && subscription ? (
@@ -80,7 +89,10 @@ export default function SubscriptionCard({
             <div className="flex items-center gap-3">
               <div
                 className="flex h-9 w-9 items-center justify-center rounded-full"
-                style={{ background: 'rgba(227,161,25,0.15)', border: '1px solid rgba(227,161,25,0.3)' }}
+                style={{
+                  background: 'rgba(227,161,25,0.15)',
+                  border: '1px solid rgba(227,161,25,0.3)',
+                }}
               >
                 <CrownIcon />
               </div>
@@ -95,8 +107,16 @@ export default function SubscriptionCard({
               className="rounded-full px-2.5 py-1 text-xs font-bold"
               style={
                 subscription.status === 'CANCELED'
-                  ? { background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.45)', border: '1px solid rgba(255,255,255,0.12)' }
-                  : { background: 'rgba(227,161,25,0.15)', color: '#e3a119', border: '1px solid rgba(227,161,25,0.25)' }
+                  ? {
+                      background: 'rgba(255,255,255,0.07)',
+                      color: 'rgba(255,255,255,0.45)',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                    }
+                  : {
+                      background: 'rgba(227,161,25,0.15)',
+                      color: '#e3a119',
+                      border: '1px solid rgba(227,161,25,0.25)',
+                    }
               }
             >
               {subscription.status === 'CANCELED' ? 'CANCELED' : 'ACTIVE'}
@@ -105,15 +125,32 @@ export default function SubscriptionCard({
 
           <div
             className="grid grid-cols-2 gap-2 rounded-xl p-3"
-            style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}
+            style={{
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.05)',
+            }}
           >
             <div>
-              <p className="text-[10px] tracking-wider uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>Period start</p>
-              <p className="mt-0.5 text-xs font-medium text-white">{formatDate(subscription.currentPeriodStart)}</p>
+              <p
+                className="text-[10px] tracking-wider uppercase"
+                style={{ color: 'rgba(255,255,255,0.3)' }}
+              >
+                Period start
+              </p>
+              <p className="mt-0.5 text-xs font-medium text-white">
+                {formatDate(subscription.currentPeriodStart)}
+              </p>
             </div>
             <div>
-              <p className="text-[10px] tracking-wider uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>Access until</p>
-              <p className="mt-0.5 text-xs font-medium text-white">{formatDate(subscription.currentPeriodEnd)}</p>
+              <p
+                className="text-[10px] tracking-wider uppercase"
+                style={{ color: 'rgba(255,255,255,0.3)' }}
+              >
+                Access until
+              </p>
+              <p className="mt-0.5 text-xs font-medium text-white">
+                {formatDate(subscription.currentPeriodEnd)}
+              </p>
             </div>
           </div>
 
@@ -123,7 +160,11 @@ export default function SubscriptionCard({
                 <span
                   key={f}
                   className="rounded-full px-2.5 py-1 text-[10px] font-semibold"
-                  style={{ background: 'rgba(227,161,25,0.08)', color: 'rgba(227,161,25,0.8)', border: '1px solid rgba(227,161,25,0.15)' }}
+                  style={{
+                    background: 'rgba(227,161,25,0.08)',
+                    color: 'rgba(227,161,25,0.8)',
+                    border: '1px solid rgba(227,161,25,0.15)',
+                  }}
                 >
                   {f}
                 </span>
@@ -140,7 +181,9 @@ export default function SubscriptionCard({
               >
                 Cancel auto-renew
               </button>
-              <span className="mx-1.5 text-xs" style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
+              <span className="mx-1.5 text-xs" style={{ color: 'rgba(255,255,255,0.15)' }}>
+                ·
+              </span>
               <span className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
                 Renews {formatDate(subscription.currentPeriodEnd)}
               </span>
@@ -150,29 +193,46 @@ export default function SubscriptionCard({
           {subscription.autoRenew && confirmCancel && (
             <div
               className="space-y-2 rounded-xl p-3"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+              style={{
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.08)',
+              }}
             >
               <p className="text-xs font-medium text-white">Cancel auto-renew?</p>
               <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                You keep access until {formatDate(subscription.currentPeriodEnd)}. You won&apos;t be charged again.
+                You keep access until {formatDate(subscription.currentPeriodEnd)}. You won&apos;t be
+                charged again.
               </p>
               {cancelError && (
-                <p className="text-xs" style={{ color: '#ff4d4d' }}>{cancelError}</p>
+                <p className="text-xs" style={{ color: '#ff4d4d' }}>
+                  {cancelError}
+                </p>
               )}
               <div className="flex gap-2 pt-0.5">
                 <button
                   onClick={handleConfirmCancel}
                   disabled={isCanceling}
                   className="cursor-pointer rounded-lg px-3 py-1.5 text-xs font-semibold transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
-                  style={{ background: 'rgba(214,0,0,0.15)', color: '#ff6b6b', border: '1px solid rgba(214,0,0,0.25)' }}
+                  style={{
+                    background: 'rgba(214,0,0,0.15)',
+                    color: '#ff6b6b',
+                    border: '1px solid rgba(214,0,0,0.25)',
+                  }}
                 >
                   {isCanceling ? 'Canceling…' : 'Yes, cancel'}
                 </button>
                 <button
-                  onClick={() => { setConfirmCancel(false); setCancelError('') }}
+                  onClick={() => {
+                    setConfirmCancel(false)
+                    setCancelError('')
+                  }}
                   disabled={isCanceling}
                   className="cursor-pointer rounded-lg px-3 py-1.5 text-xs font-semibold transition-all hover:brightness-110 disabled:opacity-50"
-                  style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.1)' }}
+                  style={{
+                    background: 'rgba(255,255,255,0.07)',
+                    color: 'rgba(255,255,255,0.7)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                  }}
                 >
                   Keep plan
                 </button>
@@ -191,18 +251,27 @@ export default function SubscriptionCard({
           <div className="flex items-center gap-3">
             <div
               className="flex h-9 w-9 items-center justify-center rounded-full"
-              style={{ background: 'rgba(227,161,25,0.15)', border: '1px solid rgba(227,161,25,0.3)' }}
+              style={{
+                background: 'rgba(227,161,25,0.15)',
+                border: '1px solid rgba(227,161,25,0.3)',
+              }}
             >
               <CrownIcon />
             </div>
             <div>
               <p className="text-sm font-bold text-white">VIP Active</p>
-              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>Unlimited access to all episodes</p>
+              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                Unlimited access to all episodes
+              </p>
             </div>
           </div>
           <span
             className="rounded-full px-2.5 py-1 text-xs font-bold"
-            style={{ background: 'rgba(227,161,25,0.15)', color: '#e3a119', border: '1px solid rgba(227,161,25,0.25)' }}
+            style={{
+              background: 'rgba(227,161,25,0.15)',
+              color: '#e3a119',
+              border: '1px solid rgba(227,161,25,0.25)',
+            }}
           >
             ACTIVE
           </span>
@@ -212,23 +281,39 @@ export default function SubscriptionCard({
           <div className="flex items-center gap-3">
             <div
               className="flex h-9 w-9 items-center justify-center rounded-full"
-              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
+              style={{
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.1)',
+              }}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" className="h-[18px] w-[18px]">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="rgba(255,255,255,0.4)"
+                strokeWidth="2"
+                className="h-[18px] w-[18px]"
+              >
                 <rect x="3" y="11" width="18" height="11" rx="2" />
                 <path d="M7 11V7a5 5 0 0 1 10 0v4" />
               </svg>
             </div>
             <div>
-              <p className="text-sm font-semibold" style={{ color: 'rgba(255,255,255,0.7)' }}>No active subscription</p>
-              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>Subscribe to unlock all episodes</p>
+              <p className="text-sm font-semibold" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                No active subscription
+              </p>
+              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                Subscribe to unlock all episodes
+              </p>
             </div>
           </div>
           {isLoggedIn && (
             <button
               onClick={onSubscribe}
               className="w-full cursor-pointer rounded-xl py-3 text-sm font-bold text-white transition-all hover:brightness-110 active:scale-95"
-              style={{ background: 'linear-gradient(90deg, #2b009f 0%, #4500ff 100%)', boxShadow: '0 4px 20px rgba(69,0,255,0.35)' }}
+              style={{
+                background: 'linear-gradient(90deg, #2b009f 0%, #4500ff 100%)',
+                boxShadow: '0 4px 20px rgba(69,0,255,0.35)',
+              }}
             >
               Get VIP — Unlimited Access
             </button>

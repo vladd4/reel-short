@@ -5,8 +5,8 @@ import CategoryTabs from '@/components/series/CategoryTabs'
 import FavoritesRow from '@/components/series/FavoritesRow'
 import FeaturedBanner from '@/components/series/FeaturedBanner'
 import GenreRow from '@/components/series/GenreRow'
-import EmptyState from '@/components/ui/EmptyState'
 import MyMuseBanner from '@/components/series/MyMuseBanner'
+import EmptyState from '@/components/ui/EmptyState'
 
 export const metadata: Metadata = {
   title: 'My Drama — Watch Short Drama Series Free',
@@ -29,11 +29,11 @@ type Props = {
 export default async function Home({ searchParams }: Props) {
   const { genre } = await searchParams
   const isShowingAll = !genre || genre.toLowerCase() === 'all'
-  let allSeries: Awaited<ReturnType<typeof seriesService.getAll>> = []
-  let genres: string[] = []
-  try {
-    ;[allSeries, genres] = await Promise.all([seriesService.getAll(), seriesService.getGenres()])
-  } catch {}
+
+  const [allSeries, genres] = await Promise.all([
+    seriesService.getAll().catch(() => [] as Awaited<ReturnType<typeof seriesService.getAll>>),
+    seriesService.getGenres().catch((): string[] => []),
+  ])
 
   const featuredSeries = allSeries.slice(0, 5)
   const filteredSeries = isShowingAll
@@ -60,9 +60,7 @@ export default async function Home({ searchParams }: Props) {
 
         {isShowingAll ? (
           visibleGenres.map((g) => {
-            const genreSeries = allSeries.filter(
-              (s) => (s.genres?.[0] ?? s.genre) === g,
-            )
+            const genreSeries = allSeries.filter((s) => (s.genres?.[0] ?? s.genre) === g)
             return <GenreRow key={g} genre={g} series={genreSeries} />
           })
         ) : (

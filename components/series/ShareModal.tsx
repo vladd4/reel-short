@@ -24,10 +24,7 @@ export default function ShareModal({ series, onClose }: Props) {
   }, [])
 
   const seriesPath = ROUTES.series(series.id, series.title)
-  const url =
-    typeof window !== 'undefined'
-      ? `${window.location.origin}${seriesPath}`
-      : seriesPath
+  const url = typeof window !== 'undefined' ? `${window.location.origin}${seriesPath}` : seriesPath
 
   function handleClose() {
     setVisible(false)
@@ -50,10 +47,12 @@ export default function ShareModal({ series, onClose }: Props) {
         backdropFilter: visible ? 'blur(4px)' : 'none',
         transition: 'background 0.28s ease, backdrop-filter 0.28s ease',
       }}
-      onClick={(e) => { if (e.target === e.currentTarget) handleClose() }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) handleClose()
+      }}
     >
       <div
-        className={`w-full overflow-hidden sm:max-w-lg modal-drawer${visible ? ' open' : ''}`}
+        className={`w-full overflow-hidden sm:max-w-lg modal-drawer${visible ? 'open' : ''}`}
         style={{
           background: '#040405',
           boxShadow: '0 -8px 40px rgba(0,0,0,0.6)',
@@ -76,18 +75,32 @@ export default function ShareModal({ series, onClose }: Props) {
 
           <div
             className="mb-5 flex items-center gap-3 rounded-xl p-3"
-            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+            style={{
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.08)',
+            }}
           >
             <div className="relative h-28 w-20 flex-shrink-0 overflow-hidden rounded-lg">
               {series.coverImage ? (
-                <Image src={series.coverImage} alt={series.title} fill sizes="80px" className="object-cover" />
+                <Image
+                  src={series.coverImage}
+                  alt={series.title}
+                  fill
+                  sizes="80px"
+                  className="object-cover"
+                />
               ) : (
                 <div className={`h-full w-full bg-gradient-to-b ${series.gradient}`} />
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="mb-1 line-clamp-2 text-sm leading-snug font-bold text-white">{series.title}</p>
-              <p className="line-clamp-3 text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
+              <p className="mb-1 line-clamp-2 text-sm leading-snug font-bold text-white">
+                {series.title}
+              </p>
+              <p
+                className="line-clamp-3 text-sm leading-relaxed"
+                style={{ color: 'rgba(255,255,255,0.5)' }}
+              >
                 {series.description}
               </p>
             </div>
@@ -107,14 +120,23 @@ export default function ShareModal({ series, onClose }: Props) {
                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
               </svg>
             ) : (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5 flex-shrink-0">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="h-5 w-5 flex-shrink-0"
+              >
                 <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                 <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
               </svg>
             )}
             <span className="text-sm font-semibold">{copied ? 'Link copied!' : 'Copy link'}</span>
             {!copied && (
-              <span className="ml-auto max-w-[140px] truncate text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
+              <span
+                className="ml-auto max-w-[140px] truncate text-xs"
+                style={{ color: 'rgba(255,255,255,0.3)' }}
+              >
                 {url}
               </span>
             )}

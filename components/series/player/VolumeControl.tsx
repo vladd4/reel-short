@@ -43,7 +43,7 @@ export default function VolumeControl({
     >
       <button
         onClick={onToggleMute}
-        className="rounded-lg p-2 transition-colors hover:bg-white/10"
+        className="cursor-pointer rounded-lg p-2 transition-colors hover:bg-white/10"
         style={{ color: 'rgba(255,255,255,0.65)' }}
       >
         {muted || volume === 0 ? (

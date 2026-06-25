@@ -9,7 +9,10 @@ export function useSubscription(isLoggedIn: boolean) {
   const [isLoading, setIsLoading] = useState(isLoggedIn)
 
   const fetch = useCallback(async () => {
-    if (!isLoggedIn) { setSubscription(null); return }
+    if (!isLoggedIn) {
+      setSubscription(null)
+      return
+    }
     setIsLoading(true)
     try {
       const res = await billingService.getSubscription()
@@ -22,7 +25,9 @@ export function useSubscription(isLoggedIn: boolean) {
   }, [isLoggedIn])
 
   useEffect(() => {
-    async function load() { await fetch() }
+    async function load() {
+      await fetch()
+    }
     load()
   }, [fetch])
 

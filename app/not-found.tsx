@@ -1,28 +1,25 @@
-import Link from "next/link";
-import { ROUTES } from "@/constants";
+import Link from 'next/link'
+import { ROUTES } from '@/constants'
 
 export default function NotFound() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
-      {/* Glow backdrop */}
+    <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 flex items-center justify-center"
       >
-        <div className="w-[480px] h-[480px] rounded-full bg-primary/10 blur-[120px]" />
+        <div className="h-[480px] w-[480px] rounded-full bg-primary/10 blur-[120px]" />
       </div>
 
-      <div className="relative space-y-6 max-w-sm">
-        {/* Large 404 */}
-        <p className="text-[96px] font-black leading-none tracking-tighter text-white/5 select-none">
+      <div className="relative max-w-sm space-y-6">
+        <p className="text-[96px] leading-none font-black tracking-tighter text-white/5 select-none">
           404
         </p>
 
-        {/* Icon */}
-        <div className="flex justify-center -mt-10">
-          <div className="w-20 h-20 rounded-2xl bg-primary/15 flex items-center justify-center">
+        <div className="-mt-10 flex justify-center">
+          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/15">
             <svg
-              className="w-10 h-10 text-primary"
+              className="h-10 w-10 text-primary"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -39,21 +36,20 @@ export default function NotFound() {
 
         <div className="space-y-2">
           <h1 className="text-2xl font-bold text-foreground">Page not found</h1>
-          <p className="text-muted text-sm leading-relaxed">
-            The series or page you&apos;re looking for doesn&apos;t exist or may
-            have been removed.
+          <p className="text-sm leading-relaxed text-muted">
+            The series or page you&apos;re looking for doesn&apos;t exist or may have been removed.
           </p>
         </div>
 
         <div className="flex flex-col gap-3 pt-2">
           <Link
             href={ROUTES.home}
-            className="w-full py-3 rounded-xl bg-primary font-semibold text-sm text-white text-center transition-opacity hover:opacity-90 active:opacity-80"
+            className="w-full rounded-xl bg-primary py-3 text-center text-sm font-semibold text-white transition-opacity hover:opacity-90 active:opacity-80"
           >
             Back to Home
           </Link>
         </div>
       </div>
     </main>
-  );
+  )
 }

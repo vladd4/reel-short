@@ -1,4 +1,6 @@
-type Props = { onSignOut: () => void }
+type Props = {
+  onSignOut: () => void
+}
 
 export default function SignOutRow({ onSignOut }: Props) {
   return (
@@ -14,13 +16,21 @@ export default function SignOutRow({ onSignOut }: Props) {
         className="flex h-9 w-9 items-center justify-center rounded-full"
         style={{ background: 'rgba(214,0,0,0.08)', border: '1px solid rgba(214,0,0,0.15)' }}
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="#d60000" strokeWidth="2" className="h-[18px] w-[18px]">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#d60000"
+          strokeWidth="2"
+          className="h-[18px] w-[18px]"
+        >
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
           <polyline points="16 17 21 12 16 7" />
           <line x1="21" y1="12" x2="9" y2="12" />
         </svg>
       </div>
-      <p className="text-sm font-semibold" style={{ color: '#d60000' }}>Sign Out</p>
+      <p className="text-sm font-semibold" style={{ color: '#d60000' }}>
+        Sign Out
+      </p>
     </button>
   )
 }

@@ -102,7 +102,11 @@ export default function SeriesCard({ series, className = '', size = 'sm' }: Prop
           {series.description}
         </p>
         <button
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(ROUTES.watch(series.id, series.title, 1)) }}
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            router.push(ROUTES.watch(series.id, series.title, 1))
+          }}
           className="flex cursor-pointer items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-bold text-white transition-all hover:brightness-110 active:scale-95"
           style={{ background: 'linear-gradient(90deg, #2b009f, #4500ff)' }}
         >

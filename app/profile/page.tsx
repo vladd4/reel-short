@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-
 import { useAuth } from '@/lib/auth'
 import ContactModal from '@/components/modals/ContactModal'
 import PaywallModal from '@/components/modals/PaywallModal'

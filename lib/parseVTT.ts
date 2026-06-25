@@ -15,7 +15,10 @@ export function parseVTT(raw: string): Cue[] {
     if (ti === -1) continue
     const [startStr, rest] = lines[ti].split(' --> ')
     const endStr = rest.trim().split(/\s+/)[0]
-    const text = lines.slice(ti + 1).join('\n').trim()
+    const text = lines
+      .slice(ti + 1)
+      .join('\n')
+      .trim()
     if (!text) continue
     cues.push({ start: parseTime(startStr), end: parseTime(endStr), text })
   }

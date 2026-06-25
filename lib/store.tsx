@@ -66,7 +66,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const isFavorite = useCallback((seriesId: string) => favorites.includes(seriesId), [favorites])
 
   return (
-    <Context.Provider value={{ unlockedKeys, unlockedEpisodeIds, markEpisodeUnlocked, favorites, canWatch, toggleFavorite, isFavorite }}>
+    <Context.Provider
+      value={{
+        unlockedKeys,
+        unlockedEpisodeIds,
+        markEpisodeUnlocked,
+        favorites,
+        canWatch,
+        toggleFavorite,
+        isFavorite,
+      }}
+    >
       {children}
     </Context.Provider>
   )

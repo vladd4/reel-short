@@ -24,7 +24,9 @@ export default function HowCoinsWork() {
       {items.map(({ icon, text }) => (
         <div key={text} className="flex items-start gap-3">
           <span className="mt-0.5 text-sm text-gold">{icon}</span>
-          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>{text}</p>
+          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            {text}
+          </p>
         </div>
       ))}
     </div>
