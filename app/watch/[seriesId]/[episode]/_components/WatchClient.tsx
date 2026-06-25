@@ -50,7 +50,6 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
   const [showGift, setShowGift] = useState(false)
   const [mobileExpanded, setMobileExpanded] = useState(false)
 
-
   function fetchEpisode(n: number) {
     const id: number | undefined = series.episodes[n - 1]?.id
     if (id === undefined) return
@@ -71,6 +70,7 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
   const episode = episodeData ?? series.episodes[currentEpisode - 1]
   const isUnlocked =
     isSubscribed || !episode.locked || unlockedEpisodeIds.includes(episode.id)
+
   const [isPurchasing, setIsPurchasing] = useState(false)
 
   async function purchaseEpisodeNow() {

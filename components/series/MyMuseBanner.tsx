@@ -1,6 +1,14 @@
+'use client'
+
 import Image from 'next/image'
+import { useAuth } from '@/lib/auth'
 
 export default function MyMuseBanner() {
+  const { isLoggedIn, user } = useAuth()
+  const isSubscribed = user?.isSubscribed ?? false
+  const hasCoins = (user?.credits ?? 0) > 0
+
+  if (!isLoggedIn || (!isSubscribed && !hasCoins)) return null
   return (
     <a
       href="https://my-muse.ai/"
