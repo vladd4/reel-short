@@ -43,13 +43,13 @@ export default function MyMuseBanner() {
         <div>
           <p
             className="mb-0.5 text-[10px] font-bold tracking-[0.15em] uppercase"
-            style={{ color: 'rgba(255,255,255,0.4)' }}
+            style={{ color: 'rgba(255,47,99,0.7)' }}
           >
-            Also from us
+            AI-Generated Content
           </p>
           <p className="text-base font-bold text-white">My Muse</p>
-          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
-            Best Short Series Streaming App
+          <p className="text-sm leading-snug" style={{ color: 'rgba(255,255,255,0.5)' }}>
+            Short-form series, audiobooks & interactive stories
           </p>
         </div>
       </div>

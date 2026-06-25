@@ -1,10 +1,28 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Series } from '@/types'
 import FavoriteButton from '@/components/series/FavoriteButton'
 import SignInModal from '@/components/modals/SignInModal'
 import { useAuth } from '@/lib/auth'
+
+const LIKED_KEY = 'liked-series'
+
+function parseLikes(val: string): number {
+  if (val.endsWith('M')) return Math.round(parseFloat(val) * 1_000_000)
+  if (val.endsWith('K')) return Math.round(parseFloat(val) * 1_000)
+  return parseInt(val, 10) || 0
+}
+
+function formatLikes(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
+  if (n >= 1_000) return `${Math.round(n / 1_000)}K`
+  return String(n)
+}
+
+function getLikedIds(): string[] {
+  try { return JSON.parse(localStorage.getItem(LIKED_KEY) ?? '[]') } catch { return [] }
+}
 
 type Props = {
   series: Series
@@ -21,11 +39,35 @@ export default function EpisodeStats({
 }: Props) {
   const { isLoggedIn } = useAuth()
   const [showSignIn, setShowSignIn] = useState(false)
+  const [liked, setLiked] = useState(false)
+  const [bump, setBump] = useState(false)
+
+  useEffect(() => {
+    setLiked(getLikedIds().includes(seriesId))
+  }, [seriesId])
+
+  function toggleLike() {
+    const ids = getLikedIds()
+    const isNowLiked = !liked
+    if (isNowLiked) {
+      localStorage.setItem(LIKED_KEY, JSON.stringify([...ids, seriesId]))
+    } else {
+      localStorage.setItem(LIKED_KEY, JSON.stringify(ids.filter((id) => id !== seriesId)))
+    }
+    setLiked(isNowLiked)
+    if (isNowLiked) {
+      setBump(true)
+      setTimeout(() => setBump(false), 300)
+    }
+  }
 
   function handleGift() {
     if (!isLoggedIn) { setShowSignIn(true); return }
     onGift()
   }
+
+  const baseCount = parseLikes(series.likes)
+  const displayCount = formatLikes(liked ? baseCount + 1 : baseCount)
 
   return (
     <>
@@ -37,21 +79,23 @@ export default function EpisodeStats({
         padding: '14px 0',
       }}
     >
-      <div
-        className="flex flex-col items-center gap-1.5"
-        style={{ color: 'rgba(255,255,255,0.6)' }}
+      <button
+        onClick={toggleLike}
+        className="flex cursor-pointer flex-col items-center gap-1.5 transition-opacity hover:opacity-80 active:opacity-50"
+        style={{ color: liked ? '#ff5d88' : 'rgba(255,255,255,0.6)' }}
       >
         <svg
           viewBox="0 0 24 24"
-          fill="currentColor"
+          fill={liked ? 'currentColor' : 'none'}
           stroke="currentColor"
           strokeWidth="2"
-          className="h-6 w-6"
+          className="h-6 w-6 transition-transform duration-150"
+          style={{ transform: bump ? 'scale(1.35)' : 'scale(1)' }}
         >
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
         </svg>
-        <span className="text-xs font-medium">{series.likes}</span>
-      </div>
+        <span className="text-xs font-medium">{displayCount}</span>
+      </button>
 
       <div
         className="flex flex-col items-center gap-1.5"

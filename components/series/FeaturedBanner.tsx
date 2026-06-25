@@ -94,7 +94,7 @@ export default function FeaturedBanner({ items }: Props) {
 
       <div
         key={s.id + '-content'}
-        className="anim-fade-up absolute inset-0 flex flex-col justify-end px-6 pb-10 md:px-14 md:pb-14"
+        className="anim-fade-up absolute inset-0 flex flex-col justify-end pl-16 pr-6 pb-10 md:px-20 md:pb-14"
       >
         <div className="max-w-2xl">
           <div className="mb-4 flex items-center gap-2">
@@ -165,6 +165,39 @@ export default function FeaturedBanner({ items }: Props) {
         </div>
       </div>
 
+      {/* Left arrow */}
+      <button
+        onClick={() => setIdx((i) => (i - 1 + items.length) % items.length)}
+        className="absolute top-1/2 left-4 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition-all hover:brightness-125 active:scale-90"
+        style={{
+          background: 'rgba(0,0,0,0.45)',
+          border: '1px solid rgba(255,255,255,0.18)',
+          backdropFilter: 'blur(8px)',
+          color: '#fff',
+        }}
+      >
+        <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+          <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+        </svg>
+      </button>
+
+      {/* Right arrow */}
+      <button
+        onClick={() => setIdx((i) => (i + 1) % items.length)}
+        className="absolute top-1/2 right-4 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition-all hover:brightness-125 active:scale-90"
+        style={{
+          background: 'rgba(0,0,0,0.45)',
+          border: '1px solid rgba(255,255,255,0.18)',
+          backdropFilter: 'blur(8px)',
+          color: '#fff',
+        }}
+      >
+        <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+          <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+        </svg>
+      </button>
+
+      {/* Dot indicators */}
       <div className="absolute right-6 bottom-5 flex items-center gap-1.5">
         {items.map((_, i) => (
           <button

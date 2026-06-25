@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
+import { cookies } from 'next/headers'
 import { seriesService } from '@/services'
 import CategoryTabs from '@/components/series/CategoryTabs'
 import FavoritesRow from '@/components/series/FavoritesRow'
@@ -29,6 +30,8 @@ type Props = {
 export default async function Home({ searchParams }: Props) {
   const { genre } = await searchParams
   const isShowingAll = !genre || genre.toLowerCase() === 'all'
+  const jar = await cookies()
+  const isAuthed = !!jar.get('nd-authed')?.value
 
   let allSeries: Awaited<ReturnType<typeof seriesService.getAll>> = []
   let genres: string[] = []
@@ -93,7 +96,7 @@ export default async function Home({ searchParams }: Props) {
           </>
         )}
 
-        <MyMuseBanner />
+        {!isAuthed && <MyMuseBanner />}
       </div>
     </main>
   )
