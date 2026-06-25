@@ -2,6 +2,7 @@
 
 import { type ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { favouritesService } from '@/services'
+import { useAuth } from '@/lib/auth'
 import { loadStoredToken } from '@/services/http.client'
 
 type Store = {
@@ -17,11 +18,16 @@ type Store = {
 const Context = createContext<Store | null>(null)
 
 export function StoreProvider({ children }: { children: ReactNode }) {
+  const { isLoggedIn } = useAuth()
   const [unlockedKeys] = useState<string[]>([])
   const [unlockedEpisodeIds, setUnlockedEpisodeIds] = useState<number[]>([])
   const [favorites, setFavorites] = useState<string[]>([])
 
   useEffect(() => {
+    if (!isLoggedIn) {
+      setFavorites([])
+      return
+    }
     if (!loadStoredToken()) return
     async function loadFavorites() {
       try {
@@ -30,7 +36,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       } catch {}
     }
     loadFavorites()
-  }, [])
+  }, [isLoggedIn])
 
   const markEpisodeUnlocked = useCallback((episodeId: number) => {
     setUnlockedEpisodeIds((prev) => (prev.includes(episodeId) ? prev : [...prev, episodeId]))
