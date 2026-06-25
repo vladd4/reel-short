@@ -481,7 +481,7 @@ export default function WatchClient({ series, initialEpisode, seriesId, related 
             setPaywallEpisode(null)
             ;(async () => { await purchaseEpisodeNow() })()
           }}
-          onSubscribed={() => setShowVipSuccess(true)}
+          onSubscribed={() => { setPaywallEpisode(null); setShowVipSuccess(true) }}
         />
       )}
 
