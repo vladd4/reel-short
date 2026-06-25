@@ -65,7 +65,11 @@ export default async function Home({ searchParams }: Props) {
           })
         ) : (
           <>
-            <GenreRow genre={genre ?? 'Results'} series={filteredSeries} showMoreButton={false} />
+            <GenreRow
+              genre={genres.find((g) => g.toLowerCase() === genre?.toLowerCase()) ?? genre ?? 'Results'}
+              series={filteredSeries}
+              showMoreButton={false}
+            />
             {filteredSeries.length === 0 && (
               <EmptyState
                 icon={
